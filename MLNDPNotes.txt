@@ -458,4 +458,101 @@ Now that we've motivated the idea behind a probability density function for a co
 SEE IMAGE GD14 15 16
 
 
+Reinforcement learning:(RL)
+======================
+
+In case of supervised learning y = f(x)
+here given x ,ML algo will try to develop a function f which can predict y
+
+In case of unsupervised learning f(x)
+here given x, ML algo will try to find the function to cluster the data into similar category.
+
+In case of RL y,z = f(x)
+here given x & z, ML algo will try to find the function using x and z , to predict y
+
+
+RL is one of the mechanisms to perform Decision Making.
+
+Markov's Decision Process(MDP):
+=======================
+States:(S) are like a sample space which involves all possible states possible for any given situation.
+
+Actions A(s) or A: are the things that we can perform in any given states.
+
+Transition Model : T(s,a,s') ~ Prob(s'|s,a)
+transition is like the physics that governs your actions or your entire play in any given world.
+It consists of three parameters
+s - initial state
+a - action taken
+s' - finial state, which can be same as initial state 
+
+T(s,a,s') ~ Prob(s'|s,a) states that T(s,a,s') is the probability of you ending up at state s' given you have taken action 'a' from state 's' .
+
+Markovian property: states that only the  present matters and the rules of the world are stationary.
+
+Reward R(s),R(s,a),R(s,a,s'): is some scalar value that you'll get when you are in a particular state.
+
+
+MDP is like a problem and the solution to this problem is something called "Policy"
+
+Policy : PI(s) ----> a ie for any given state that you are in it gives you the action you need to perform.
+
+Policy* or PI* is the optimal policy which maximises the long term expected reward
+
+So if consider RL as Supervised learining it would look something like
+<s1,a1>,<s2,a2>..........<sn,an> ie you are given n pairs of states and actions based on which the ML algo will devlop f which is PI is Rl
+
+however what exactly happens in RL is you are given 
+<s1,a1,r1>,<s2,a2,r2>..........<sn,an,rn>  ie you are given n pairs of states,actions & rewards based on which the RL algo will devlop f which is PI is Rl and the 'r' is equivalent 'z' that we have discussed in RL definiton.
+ie y,z = f(x) 
+
+Policy is the one that states you what action you must take at any given state you are in.
+
+Policy is different from plan making because it doesn't tell you what actions you must take to reach the goal but it only states what immediate action you should take given your state
+
+Temporal Credit assignment problem: is where your algo will learn to choose optimal actions from late rewards in contrast with immediate rewards like in your Supervised learning.
+
+Ex: 
+SEE IMAGE Temporal credit problem
+
+here in case of SL you'll be rewarded at each state whereas in RL you'll be rewarded at reward state
+
+The value of the reward is the one that plays a vital role in MDP to reach the final reward position as quickly as possible or as slowly as possible.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
