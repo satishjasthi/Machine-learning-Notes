@@ -500,10 +500,10 @@ Policy : PI(s) ----> a ie for any given state that you are in it gives you the a
 Policy* or PI* is the optimal policy which maximises the long term expected reward
 
 So if consider RL as Supervised learining it would look something like
-<s1,a1>,<s2,a2>..........<sn,an> ie you are given n pairs of states and actions based on which the ML algo will devlop f which is PI is Rl
+<s1,a1>,<s2,a2>..........<sn,an> ie you are given n pairs of states and actions based on which the ML algo will devlop f which is PI in Rl
 
 however what exactly happens in RL is you are given 
-<s1,a1,r1>,<s2,a2,r2>..........<sn,an,rn>  ie you are given n pairs of states,actions & rewards based on which the RL algo will devlop f which is PI is Rl and the 'r' is equivalent 'z' that we have discussed in RL definiton.
+<s1,a1,r1>,<s2,a2,r2>..........<sn,an,rn>  ie you are given n pairs of states,actions & rewards based on which the RL algo will devlop f which is PI in Rl and the 'r' is equivalent 'z' that we have discussed in RL definiton.
 ie y,z = f(x) 
 
 Policy is the one that states you what action you must take at any given state you are in.
@@ -520,25 +520,114 @@ here in case of SL you'll be rewarded at each state whereas in RL you'll be rewa
 The value of the reward is the one that plays a vital role in MDP to reach the final reward position as quickly as possible or as slowly as possible.
 
 
+Sequence of rewards:
+
+* In case of RL if we have infinite time to reach from start till goal then it is said to have inifinite horizon and policy for the game is defined as
+
+Pi(s) ---> a ; ie Policy(state) = action
+here the action wrt to a given state remains same no matter at what time you check it
+
+See IMAGE game.png
+
+here as we move from block 8--> 7---> 6 and so on till ---> 5---> Goal.
+So if we check the state of block 7 at any point of time it remains the same <----
 
 
+*Whereas in case of finite horizons the state changes wrt to time
+
+SEE IMAGE game.png
+
+here as we move from block 8--> 7 the algorithm choose to enter block 9 instead of 6 , inspite of the danger of getting into Danger block because this is a finite horizon where the time left to complete the game decerease for every step you take
+For example if you have only  4 sec left to complete the game and if you are in block 7 then the game choose the path 7-9-5-goal rather than 7-6-2-3--5-goal.
+So the conceptof everything remains stationary fails in case of finite horizon.
+hence in case of finite horizon 
+Pi(s,t)---> a
+t - time
+
+Utility of Sequences: 
+if we have two different sequences of states S0,S1,S2..... and S0,S'1,S'2....
+
+if U{S0,S1,S2.....} > U{S0,S'1,S'2....}
+
+then U{S1,S2.....} > U{S'1,S'2....}
+
+where U - utility function
+
+this Utility function is defined as 
+
+U{S0,S1,S2.....} = SUM(from t=0 to Infinity){R(St)} = Infinity.....1.0
+
+ie the value of this utility function is infinity because for any given sequence it rewards is as shown below:
+
+Sequence : S0,S1,S2.....
+Reward :   R1,R2,R3...... and so on
+
+so if we keep on adding Rewards R for every sequence ,since seqeunce doesn't end the sum keep on increases and becomes infinity. 
+
+Intutively: It is like whatever you do with your life you'll be rewarded and you'll be immortal, in other words you won't risk to improve yourself because no matter what you do you'll be rewarded.
+
+But if we define U as below
+
+U{S0,S1,S2.....}  = SUM(from t=0 to infinity){Gamma**t R(St)}...2.0
+
+where 0 <= gamma <1
+in other words the equation 2.0 is just the sum of terms upto infinity of geometric series, which is
+
+U{S0,S1,S2.....} = (Rmax)* (1 / (1-gamma))....3.0
+
+eq 3.0 is called discounted reward
+
+if we observe 2.0, we can makeout that as t increases gamma value goes on decreasing(since gamma is a fraction less than 1) so the reward at each consecutive step decreases.
+
+It is like covering infinite distance within finite time, that what eq 2.0 means
 
 
+Policies:
+
+We know optimal policy is defined as 
+
+Pi* = argmax(Pi){E(R|Pi)}....4.0
+
+ where R = SUM(from t=0 to infinity){gamma**t R(St)}, ie discounted reward
+
+U{Pi}(S) is U with policy Pi and State S
+
+U{Pi}(S) = E[R|Pi,S0 = S]...5.0
+
+eq 5.0 represents Utility function for a state when you choosen Pi as a Policy. In other words it's indicating the long term rewards that you'll get if you have used the Policy Pi and start at state S0.
+
+For example you've choosen a path(Policy) and the start state for your game and you'll play the game,then what would be the reward that you'll be getting at the end of the game is given by eq 5.0 
+
+U(s) always returns delayed or long term rewards whereas R(S) returns the immediate rewards.So rewards and utility can never be the same.
 
 
+so optimal policy
+
+Pi*(s) = argmax(a){SUM(T(s,a,s')U(s'))}
+
+where 
+U(S) = R(S) + Gamma * Max(a){SUM(T(s,a,s')U(s'))}...6.0
+
+eq 6.0 is called Bellman equation
 
 
+Finding policies:
+ we know from Bellman's equation
+
+U(S) = R(S) + Gamma * Max(a){SUM(T(s,a,s')U(s'))} 
+
+so we can use this eq as 
+
+Start with some arbitrary utilities
+Update utilities based on neighbors(ie any state that you can reach)
+repeat until convergence
+
+^U(S)(t+1) = R(S)  + Gamma Max(a){SUM(T(s,a,s')* ^Ut(s'))}
 
 
+So I'll update ^U(S)(t+1), which is the utility of current state 
 
-
-
-
-
-
-
-
-
+^Ut(s') is the Utility of all other remaining states.
 
 
 
