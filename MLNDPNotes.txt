@@ -33,3 +33,48 @@ General approach to kNN:
 4. Train: Does not apply to the kNN algorithm.
 5. Test: Calculate the error rate.
 6. Use: This application needs to get some input data and output structured numeric values. Next, the application runs the kNN algorithm on this input data and determines which class the input data should belong to. The application then takes some action on the calculated class.
+
+Euclidian distance : is the simple distance formula to calculate the distance between any two points in a plane,
+
+d  = sqrt((X2-X1)**2 + (Y2-Y1)**2)
+
+but the good thing is that we can use the same formula to calculate the distance b/w 2 points in n dimensional space
+
+consider 2 points A = (x1,y1,z1,r1,k1.......,n1) ,B = (x2,y2,z2,r2,k2.......,n2)
+
+d  = sqrt((X2-X1)**2 + (Y2-Y1)**2 + (Z2-Z1)**2 + .... + (n2-n1)**2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
