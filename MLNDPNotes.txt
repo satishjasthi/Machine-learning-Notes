@@ -23,7 +23,7 @@ Classifying with k-Nearest Neighbors:
 k-Nearest Neighbors
 Pros: High accuracy, insensitive to outliers, no assumptions about data
 Cons: Computationally expensive, requires a lot of memory
-Works with: Numeric values, nominal values
+Works with: Numeric values, nominal values(means 1,0)
 ----------------------------------------------------------------------
 
 General approach to kNN:
@@ -43,6 +43,183 @@ but the good thing is that we can use the same formula to calculate the distance
 consider 2 points A = (x1,y1,z1,r1,k1.......,n1) ,B = (x2,y2,z2,r2,k2.......,n2)
 
 d  = sqrt((X2-X1)**2 + (Y2-Y1)**2 + (Z2-Z1)**2 + .... + (n2-n1)**2)
+
+
+error rate: Number of inputs algorithm wrongly classified given input wrongly divide by total number of inputs givent to the algo.
+
+Parsing:The actual definition of "parse" in Wiktionary is "To split a file or other input into pieces of data that can be easily stored or manipulated." 
+
+
+Data preprocessing: whenever the values of the features vary over a wide range and their range differ significantly from each other, in such cases is appropriate to scale the features, which helps in providing equal importance to all features.YOu can use min-max normaliser from sklearn for this,whose formula is
+
+new_value = (old_value - min)/(max-min)
+
+whenever you need to calculate the min or max value of a column in dataset you can use
+
+datasetname.min(0)
+datasetname.mix(0)
+
+it returns min values of all columns as a row vector ,where each element of the vector is the min value each column
+
+similiary to get the min/max value of a row
+
+datasetname.min(1)
+
+The function np.tile(value,repetation) creates an array of repeated values
+
+suppose 
+>>> np.tile(5,2)
+array([5, 5])
+
+>>> np.tile(5,(2,2))
+array([[5, 5],
+       [5, 5]])
+
+>>> a = np.matrix([[1,2,3],[5,8,9]])
+>>> a
+matrix([[1, 2, 3],
+        [5, 8, 9]])
+>>> np.tile(a,2)
+matrix([[1, 2, 3, 1, 2, 3],
+        [5, 8, 9, 5, 8, 9]])
+>>> np.tile(a,(2,2))
+matrix([[1, 2, 3, 1, 2, 3],
+        [5, 8, 9, 5, 8, 9],
+        [1, 2, 3, 1, 2, 3],
+        [5, 8, 9, 5, 8, 9]])
+
+
+while using numpy '/' operator means element wise division but to carry out matrix division you must use 
+linalg.solve(matA,matB)
+
+Drawbacks of KNN:
+
+kNN is an example of instance-based learning, where you need to have instances of data close at hand to perform the machine learning algorithm. The algorithm has to carry around the full dataset; for large datasets, this implies a large amount of storage. In addition, you need to calculate the distance measurement for every piece of data in the database, and this can be cumbersome.
+
+An additional drawback is that kNN doesn’t give you any idea of the underlying structure of the data; you have no idea what an “average” or “exemplar” instance from each class looks like.
+
+
+
+DECISION TREES:
+================
+
+Decision trees
+Pros: Computationally cheap to use, easy for humans to understand learned results, missing values OK, can deal with irrelevant features
+Cons: Prone to overfitting
+Works with: Numeric values, nominal values
+
+Information theory is the key element that helps Decision trees to create branches and split data based several conditions.
+
+To build a decision tree, you need to make a first decision on the dataset to dictate which feature is used to split the data. To determine this, you try every feature and measure which split will give you the best results. After that, you’ll split the dataset into subsets. The subsets will then traverse down the branches of the first decision node. If the data on the branches is the same class, then you’ve properly classified it and don’t need to continue splitting it. If the data isn’t the same, then you need to repeat the splitting
+process on this subset. The decision on how to split this subset is done the same way as the original dataset, and you repeat this process until you’ve classified all the data
+
+Pseudo-code for a function called createBranch() would look like this:
+
+Check if every item in the dataset is in the same class:
+	If so return the class label
+	Else
+		find the best feature to split the data
+		split the dataset
+		create a branch node
+		for each split
+			call createBranch and add the result to the branch node
+		return branch node
+
+Please note the recursive nature of createBranch. It calls itself in the second-to-last line. 
+
+General approach to decision trees
+1. Collect: Any method.
+2. Prepare: This tree-building algorithm works only on nominal values, so any continuous values will need to be quantized.
+3. Analyze: Any method. You should visually inspect the tree after it is built.
+4. Train: Construct a tree data structure.
+5. Test: Calculate the error rate with the learned tree.
+6. Use: This can be used in any supervised learning task. Often, trees are used to better understand the data.
+
+
+Some decision trees make a binary split of the data, but we won’t do this. If we split on an attribute and it has four possible values, then we’ll split the data four ways and create four separate branches. We’ll follow the ID3 algorithm, which tells us how to split the data and when to stop splitting it. (See http://en.wikipedia.org/wiki/ID3_algorithm for more information.)
+
+Using information theory, you can measure the information before and after the split. Information theory is a branch of science that’s concerned with quantifying information
+
+The change in information before and after the split is known as the information gain. When you know how to calculate the information gain, you can split your data across every feature to see which split gives you the highest information gain. The split with the highest information gain is your best option.
+
+Before you can measure the best split and start splitting our data, you need to know how to calculate the information gain. The measure of information of a set is known as the Shannon entropy, or just entropy for short.
+
+Entropy is defined as the expected value of the information. First, we need to define information. If you’re classifying something that can take on multiple values, the information for symbol xi is defined as
+
+l(Xi) = log2{p(Xi)}.....2.0
+
+where p(xi) is the probability of choosing this class.
+To calculate entropy, you need the expected value of all the information of all possible values of our class. This is given by
+
+H = - SUM{from i=1 to n}(p(xi) * log2{p(xi)})
+
+where n is the number of classes.
+
+The higher the entropy, the more mixed up the data is. 
+
+Gini impurity: which is the probability of choosing an item from the set and the probability of that item being misclassified.
+
+What exactly is Information and Entropy?
+A decision tree tries to split your data across every feature to see which split gives you the highest information gain. So it is like at the begining data is highly uncertain, as the Decision tree branches out from root to leaf node , at each branch this uncertainity about a class of dependent variable decreases.So in other words Information is nothing but purity or certainity in data where as entropy is nothing but impurity in data.
+for more information refer this, it amazing: http://stackoverflow.com/questions/1859554/what-is-entropy-and-information-gain
+
+
+when do decision tree terminates branching or spliting?
+You’ll stop under the following conditions: you run out of attributes on which to split or all the instances in a branch are the same class. If all instances have the same class, then you’ll create a leaf node, or terminating block. Any data that reaches this leaf node is deemed to belong to the class of that leaf node.
+
+If our dataset has run out of attributes but the class labels
+are not all the same, you must decide what to call that leaf node. In this situation, you’ll take a majority vote.
+
+
+The advantage of decision trees over another machine learning algorithm like kNN is that you can distill the dataset into some knowledge, and you use that knowledge only when you want to classify something. 
+
+DRAWBACKS of Decision Tree with ID3 algorithm:
+============================================
+In case of overfitting. In order to reduce the problem of overfitting, we can prune the decision tree. This will go through and remove some leaves. If a leaf node adds only a little information(entropy change is min), it will be cut off and merged with another leaf.
+We’ll investigate this further when we revisit decision trees in chapter 9. In chapter 9 we’ll also investigate another decision tree algorithm called CART. The algorithm we used in this chapter, ID3, is good but not the best. ID3 can’t handle numeric values. We could use continuous values by quantizing them into discrete
+bins, but ID3 suffers from other problems if we have too many splits.
+
+SUMMARY ON DECISION TREEs:
+A decision tree classifier is just like a work-flow diagram with the terminating blocks representing classification decisions. Starting with a dataset, you can measure the inconsistency of a set or the entropy to find a way to split the set until all the data belongs to the same class. The ID3 algorithm can split nominal-valued datasets. Recursion is used in tree-building algorithms to turn a dataset into a decision tree. The tree is easily represented in a Python dictionary rather than a special data structure.
+
+Cleverly applying Matplotlib’s annotations, you can turn our tree data into an easily understood chart. The Python Pickle module can be used for persisting our tree. The contact lens data showed that decision trees can try too hard and overfit a dataset. This overfitting can be removed by pruning the decision tree, combining adjacent leaf nodes that don’t provide a large amount of information gain. There are other decision tree–generating algorithms. The most popular are C4.5 and CART. CART will be addressed in chapter 9 when we use it for regression.
+
+
+
+NAIVE BAYES ALGO:
+==================
+Naïve Bayes
+Pros: Works with a small amount of data, handles multiple classes
+Cons: Sensitive to how the input data is prepared
+Works with: Nominal values
+
+
+Bayesian decision theory told us to find the two probabilities:
+If p1(x, y) > p2(x, y), then the class is 1.
+If p2(x, y) > p1(x, y), then the class is 2.
+These two rules don’t tell the whole story. I just left them as p1() and p2() to keep it as simple as possible. What we really need to compare are p(c1|x,y) and p(c2|x,y). Let’s read these out to emphasize what they mean. Given a point identified as x,y, what is the probability it came from class c1? What is the probability it came from class c2?. The problem is that the equation from our friend is p(x,y|c1), which is not the same. We can use Bayes’ rule to switch things around. Bayes’ rule is applied to these statements as follows:
+
+	    P(x,y|Ci)*p(Ci)
+P(Ci|x,y) = -----------
+		p(x,y)
+
+
+With these definitions, we can define the Bayesian classification rule:
+If P(c1|x, y) > P(c2|x, y), the class is c1.
+If P(c1|x, y) < P(c2|x, y), the class is c2.
+Using Bayes’ rule, we can calculate this unknown from three known quantities. We’ll soon write some code to calculate these probabilities and classify items using Bayes’ rule.
+
+
+Statistics tells us that if we need N samples for one feature, we need N10 for 10 features and N1000 for our 1,000-feature vocabulary. The number will get very large very quickly.
+
+
+If we assume independence among the features, then our N1000 data points get reduced to 1000*N. By independence I mean statistical independence; one feature or word is just as likely by itself as it is next to other words. We’re assuming that the word bacon is as likely to appear next to unhealthy as it is next to delicious. We know this
+assumption isn’t true; bacon almost always appears near delicious but very seldom near unhealthy. This is what is meant by naïve in the naïve Bayes classifier. The other assumption we make is that every feature is equally important. We know that isn’t true either. If we were trying to classify a message board posting as inappropriate, we probably don’t need to look at 1,000 words; maybe 10 or 20 will do. Despite the minor flaws of these assumptions, naïve Bayes works well in practice.
+
+Classifying text:
+In order to get features from our text, we need to split up the text. But how do we do that? Our features are going to be tokens we get from the text. A token is any combination of characters. You can think of tokens as words, but we may use things that aren’t words such as URLs, IP addresses, or any string of characters. We’ll reduce every piece
+of text to a vector of tokens where 1 represents the token existing in the document and 0 represents that it isn’t present.
+
 
 
 
