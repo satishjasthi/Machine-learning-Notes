@@ -210,10 +210,10 @@ If P(c1|x, y) < P(c2|x, y), the class is c2.
 Using Bayes’ rule, we can calculate this unknown from three known quantities. We’ll soon write some code to calculate these probabilities and classify items using Bayes’ rule.
 
 
-Statistics tells us that if we need N samples for one feature, we need N10 for 10 features and N1000 for our 1,000-feature vocabulary. The number will get very large very quickly.
+Statistics tells us that if we need N samples for one feature, we need N**10 for 10 features and N**1000 for our 1,000-feature vocabulary. The number will get very large very quickly.
 
 
-If we assume independence among the features, then our N1000 data points get reduced to 1000*N. By independence I mean statistical independence; one feature or word is just as likely by itself as it is next to other words. We’re assuming that the word bacon is as likely to appear next to unhealthy as it is next to delicious. We know this
+If we assume independence among the features, then our N**1000 data points get reduced to 1000*N. By independence I mean statistical independence; one feature or word is just as likely by itself as it is next to other words. We’re assuming that the word bacon is as likely to appear next to unhealthy as it is next to delicious. We know this
 assumption isn’t true; bacon almost always appears near delicious but very seldom near unhealthy. This is what is meant by naïve in the naïve Bayes classifier. The other assumption we make is that every feature is equally important. We know that isn’t true either. If we were trying to classify a message board posting as inappropriate, we probably don’t need to look at 1,000 words; maybe 10 or 20 will do. Despite the minor flaws of these assumptions, naïve Bayes works well in practice.
 
 Classifying text:
