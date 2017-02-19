@@ -56,7 +56,7 @@ State is like the summary of information used to determine what happens next.
 formally state is a function of History:
  St = f(Ht)
 
-Environment state:S(e,t) is the state of the environment which determines which observation and reward it has to choose for agent next.It's not visible for agent.Agent's algo doesn't depend on environment state
+Environment state:S(e,t) is the internal structure of information which determines which observation and reward it has to choose for agent next.It's not visible for agent.Agent's algo doesn't depend on environment state
 
 Agent state:The agent state S(a,t) is the agent’s internal representation basically summarises what it has seen till now ,to help agent to choose what happens next.
 It can be any function of history:
@@ -149,7 +149,7 @@ P(a,s,st) = P[St+1 = st| St = s, At = a]
 R(a,s)  = E [Rt+1 | St = s, At = a]
 	     next   previous  previous
 	   reward    state	action
-
+Rt+1 is the reward that you'll get as soon as you leave the present state.
 
 SEE IMAGES UCL_RL4 to UCL_RL7
 
@@ -224,7 +224,7 @@ The current state completely characterises the process, ie the current state giv
 
 Almost all of the RL problems can be formalised as MDPs,
 Ex: 1. Optimal control primarily deals with continuous MDPs
-2.Partially observable problems can be converted to MDPS(if you have a proper fundamentals of MDP then any Partially observable problems can be convereted into MDP).
+2.Partially observable problems can be converted to MDPS(if you have  proper fundamentals of MDP then any Partially observable problems can be convereted into MDP).
 3.Bandits are MDPS with one state(this is like you are provided with a set of actions and you'll be chosing only one state for which you'll be rewarded,Ex:those ads that are suggested for you while you are googling.)
 
 Markov Property: is the key for MDP
@@ -246,6 +246,7 @@ Pss' = P[St+1=s'|St=s]
 Samples of MDP
 
 See IMAGES UCL_RL13 UCL_RL14 
+in UCL_RL14 what matrix says is that take the row C1 , if you start at C1 what is the transition probabilities(or the prob that you'll end up in C1 or C2...) for other states C2 or C3....
  
 Markov Reward Process:A Markov reward process is a Markov chain with values or rewards
 
@@ -253,8 +254,8 @@ Defin: A Markov Reward Process is a tuple (S,P,R,γ)
 S is a finite set of states
 P is a state transition probability matrix,
 Pss' = P [St+1 = s'| St = s]
-R is a reward function, Rs = E [Rt+1 j St = s]
-γ is a discount factor, γ 2 [0; 1]
+R is a reward function, Rs = E [Rt+1 | St = s]
+γ is a discount factor, γ lies bwt [0, 1]
 
 
 Reward function is the one which calculates the immediate rewards of actions.
@@ -269,7 +270,7 @@ Gt = R(t+1) + γR(t+2) + .... = SUM(k = 0 to infinity ){(γ**k)*R(t+k+1)}
 
 this calculates the sum of all future rewards from current state to inifinity
 
-*The discount γ 2 [0,1] is the present value of future rewards
+*The discount γ e [0,1] is the present value of future rewards
 *The value of receiving reward R after k + 1 time-steps is γkR.
 *This values immediate reward above delayed reward.
 	*γ close to 0 leads to "myopic" evaluation ie you only care about R(t+1)
@@ -293,22 +294,22 @@ The value function v(s) gives the long-term value of state s
 Definition:
 The state value function v(s) of an MRP is the expected return
 starting from state s
-v(s) = E [Gt j St = s]
+v(s) = E [Gt | St = s]
 
 SEE image UCL_RL16
 here the value of value function for state C1 is Expectation of all those samples that start from C1 ie average of all those states that start from C1
 
 the role of discount factor γ
 See IMAGE UCL_RL17,UCL_RL18
-as you can see when γ=0 the value function only cares about the immediate rewards of the state,however when γ = 1 it cares about the immediate as well as future states, which can infered from the values of value function in red color in those photos
+as you can see when γ=0 the value function only cares about the immediate rewards of the state,so the values in red color in each state is same as their reward,however when γ = 1 it cares about the immediate as well as future states, which can infered from the values of value function in red color in those photos
 
 Bellman's Equation for MRP:
 
-what bellman's equation basically says is that if you move from your present state a new state what is the immediate reward + how good is to be in that state.
+what bellman's equation basically says is that if you move from your present state, to a new state, then value of new state is the immediate reward + how good is to be in that state ie value of the that state.
 
 The value function can be decomposed into two parts:
 immediate reward Rt+1 and discounted value of successor state γv(St+1)
-v(s) = E [Gt j St = s]
+v(s) = E [Gt | St = s]
 = E [Rt+1 + γRt+2 + γ2Rt+3 + ...| St = s]
 = E [Rt+1 + γ (Rt+2 + γRt+3 + ...) | St = s]
 = E [Rt+1 + γGt+1 | St = s]
@@ -346,12 +347,12 @@ A is a finite set of actions
 P is a state transition probability matrix,
 P(a,s,s') = P [St+1 = s'| St = s; At = a]
 R is a reward function, R(a,s) = E [Rt+1 | St = s, At = a]
-γ is a discount factor γ 2 [0, 1]
+γ is a discount factor γ e [0, 1]
 
 Policies:
 Definition: 
 A policy π is a distribution over actions given states,
-π(ajs) = P [At = a j St = s]
+π(a|s) = P [At = a j St = s]
 ie it attaches probability to all possible actions available for a given state,and the agent is the one which will be weighing this probability values,hence the policies are completely under the control of the agent.
 
 A policy fully defines the behaviour of an agent
@@ -456,7 +457,7 @@ how do we find the optimal policy?
 
 An optimal policy can be found by maximising over q∗(s, a),
 
-π∗(a|s) = ( 1 if a =  a = argmax(a e A){ q∗(s, a)} , otherwise 0)
+π∗(a|s) = ( 1 if a = argmax(a e A){ q∗(s, a)} , otherwise 0)
 
 *There is always a deterministic optimal policy for any MDP
 *If we know q∗(s, a), we immediately have the optimal policy
@@ -504,7 +505,7 @@ ie DP is a very general solution method for problems which have 2 properties:
 
 2.Overlapping subproblems:(means that the subproblems that occur will occur again and again,by solving those subproblems we can solve the main problem much more effectively than directly solving the main problem )
 	*Subproblems reoccur many times 
-	*Solutions can be cached and reused.ie by solving the small problems we can reuse them in solving much complex problems,by using these like.
+	*Solutions can be cached and reused.ie by solving the small problems we can reuse them in solving much complex problems,
 
 3.Markov Decision process supports both above properties:
 	* Bellman's equation gives recursive decomposition(ie optimal substrucutres)
@@ -559,7 +560,7 @@ POLICY ITERATION:
 		Vπ(s) = E[R(t+1) + γ*R(t+2) + ...|St = s]
     
 
-*Improve the polciy by acting greedly with respect to Vγ
+*Improve the polciy by acting greedly with respect to Vπ
 π' = greedy(Vπ)
 you'll look around your state and pick the best value that's what greedy means.
 
