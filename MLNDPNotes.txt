@@ -644,4 +644,3 @@ So I'll update ^U(S)(t+1), which is the utility of current state
 
 
 
-
