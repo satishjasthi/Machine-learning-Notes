@@ -535,6 +535,7 @@ Applications of DP:
 
 POLICY EVALUATION:
 ==================
+we use Bellman's expectation equation to do policy evaluation and Bellman's optimal equation to solve control problem ie finding the best policy.
 
 Problem: evaluate a given policy π
 Solution:Iterative application of Bellman's expectation backup
@@ -550,7 +551,7 @@ where s' is a successor state of s
 
 there is also asynchronous backup iterative process
 
-Take a IMAGE of the side after synchronous backup
+SEE IMAGE UCL_RL37 to 40 
 
 
 POLICY ITERATION:
@@ -560,14 +561,127 @@ POLICY ITERATION:
 		Vπ(s) = E[R(t+1) + γ*R(t+2) + ...|St = s]
     
 
-*Improve the polciy by acting greedly with respect to Vπ
-π' = greedy(Vπ)
-you'll look around your state and pick the best value that's what greedy means.
+	*Improve the polciy by acting greedly with respect to Vπ
+	π' = greedy(Vπ)
+	you'll look around your state and pick the best value that's what greedy means.
 
 *In general we need more iterations of improvement/evalution for complex MDPs
 *But this procees of policy iteration always convergs to π* ie optimal policy   
 
+see IMAGE UCL_RL41
 
+*Consider a deterministic policy a = π(s)
+
+SEE IMAGE UCL41 and 42
+
+what those two photos are trying to say is tha if you chose a random policy and start acting greedily then the policy function keeps on increasing and  it stops increasing when it reaches the optimal value.
+
+
+Modified Policy Iteration:
+See IMAGE 40 eventhough the first value function was able to produce optimal policy by acting greedly, do we still have to iterate to improve the value function which results in same policy or can we stop at the first value function ? these are equations answered below
+
+*Does policy evaluation need to converge to vπ?
+*Or should we introduce a stopping condition
+e.g. epsilon-convergence of value function
+*Or simply stop after k iterations of iterative policy evaluation?
+*For example, in the small gridworld k = 3 was sufficient to
+achieve optimal policy
+*Why not update policy every iteration? i.e. stop after k = 1
+This is equivalent to value iteration (next section)
+
+
+Principle of Optimality:
+
+Any optimal policy can be subdivided into two components:
+1.An optimal first action A∗
+2.Followed by an optimal policy from successor state S'
+ie if you make an optimal move/ optimal action in your first step then you are actually following an optimal policy to do that so all your future actions will also be optimal.
+
+Theorem (Principle of Optimality):
+ 
+A policy π(ajs) achieves the optimal value from state s,
+vπ(s) = v∗(s), if and only if
+For any state s1  reachable from s
+π achieves the optimal value from state s0, vπ(s0) = v∗(s0)
+
+
+Value iteration:  
+
+Deterministic Value Iteration
+If we know the solution to subproblems v∗(s0)
+Then solution v∗(s) can be found by one-step lookahead
+v∗(s) = max(a e A){R(a,s) + γ Sum(s,,S){P(a,s,s') * v(s')}
+
+The idea of value iteration is to apply these updates iteratively
+Intuition: start with final rewards and work backwards
+Still works with loopy, stochastic MDPs
+
+intution:
+see IMAGE 44 here instead of taking some random policy and evaluating it and improving it, here we start from the goal and move backwards to calulate the value function for each state from goal there by we are propagating the true value to all states.
+
+In case of value iteration we use bellman's optimal eqation to do synchronous backup instead of bellman's expectation equation as in policy iteration.
+
+Problem: find optimal policy π
+
+Solution: iterative application of Bellman optimality backup
+
+v1 --> v2 -->... v∗
+Using synchronous backups
+
+	*At each iteration k + 1
+	*For all states s 2 S
+	*Update vk+1(s) from vk(s0)
+
+Convergence to v∗ will be proven later
+Unlike policy iteration, there is no explicit policy
+Intermediate value functions may not correspond to any policy 
+
+unlike policy iteration (where every iteration of value function corresponds to some policy) ,in value iteration the intermediate value functions doesn't correspond to any policy,only the final optimal value function will relate to a policy. 
+
+See IMAGE 42 to 46 
+IN 46 summary is mentioned, one important thing to note is that in this case you are given a MDP,(P,S), ie some one has given you the details about the environment in which agent acts, so you need to worry about the environment.
+
+Asynchronous Dynamic Programming:
+*DP methods described so far used synchronous backups
+*i.e. all states are backed up in parallel
+*Asynchronous DP backs up states individually, in any order
+*For each selected state, apply the appropriate backup
+*Can significantly reduce computation
+*Guaranteed to converge if all states continue to be selected
+
+Three simple ideas for asynchronous dynamic programming:
+	*In-place dynamic programming
+	*Prioritised sweeping
+	*Real-time dynamic programming
+
+MODEL FREE PREDICITION:
+=========================
+-means the environment can be modeled as an MDP but no one gives us the MDP ie no one tells about the environment but the agent learns to behave in an optimal manner. 
+
+MODEL FREE Prediction methods:
+
+Monte-Carlo Reinforcement Learning:
+*MC methods learn directly from episodes of experience
+*MC is model-free: no knowledge of MDP transitions / rewards
+*MC learns from complete episodes: no bootstrapping
+*MC uses the simplest possible idea: value = mean return
+*Caveat: can only apply MC to episodic MDPs
+	All episodes must terminate
+ie Monte carlo works only for those MDPs whose episodes terminates.
+
+Monte-Carlo Policy Evaluation:
+
+Goal: learn vπ from episodes of experience under policy π
+S1, A1, R2.....,Sk ∼ π
+
+Recall that the return is the total discounted reward:
+Gt = Rt+1 + γRt+2 +.... + γT−1RT
+
+Recall that the value function is the expected return:
+vπ(s) = Eπ [Gt | St = s]
+
+Monte-Carlo policy evaluation uses empirical mean return
+instead of expected return
 
 
 
