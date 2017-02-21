@@ -533,7 +533,7 @@ here as we move from block 8--> 7---> 6 and so on till ---> 5---> Goal.
 So if we check the state of block 7 at any point of time it remains the same <----
 
 
-*Whereas in case of finite horizons the state changes wrt to time
+*Whereas in case of finite horizons the state changes wrt to time, in case of finite horizons markovian property of a state fails because the policy of the state doesn't remain constant it actually changes with time.
 
 SEE IMAGE game.png
 
@@ -628,11 +628,6 @@ repeat until convergence
 So I'll update ^U(S)(t+1), which is the utility of current state 
 
 ^Ut(s') is the Utility of all other remaining states.
-
-
-
-
-
 
 
 
