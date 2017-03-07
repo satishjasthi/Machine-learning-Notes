@@ -630,6 +630,110 @@ So I'll update ^U(S)(t+1), which is the utility of current state
 ^Ut(s') is the Utility of all other remaining states.
 
 
+==========================================================================
+
+
+DEEP LEARNING:
+==================
+
+DL excels when we have a massive amount of data and complex problems.DL can be applied easily to wide variety of fields unlike other machine learning methods which are restricted.
+
+Logestic classifier: is a linear classifier of the form
+
+W*X + b = Y
+
+where x =  input(pixels in case of images)
+y = ouput(image prediction in case of images)
+
+using softmax function we convert the ouptut values into probabilities
+
+S(yi) = e^(yi)/SUM(over j){e^(yi)}
+
+softmax makes the value of correct label nearer to 1 and others closer to 0.softmax can convert any kind of score to proper probabilities
+
+
+One-hot encoding is useful when the dependent variable has few classes,but it becomes inefficient when number of class are larger
+
+we use cross-entropy to measure the distance between S(Y) and L
+L = one-hot encoded vector = [1,0,0,0,0,.....]
+
+INPUT---> D(S,L)--->one-hot encoding
+
+here input = S(Y) = softmax(y) = 0.7,0.002,0.03..... = whose sum = 1
+D(S,L) = - SUM(over i){Li * log(Si)}
+
+D(S,L) != D(L,S)
+
+Together it looks something like ,see Image DP1
+this process is called Multinomial Logestic cassification.
+
+Minimizing cross entropy:
+
+we define loss
+L = (SUM(over i){D(S(wXi + b)),Li})
+
+to minimize this we find -alpha* delta_L(w,b) ie gradient descent
+
+
+It is prefered that our features has zero mean and equal variance, because it helps the optimizer to find the optimal value much faster.
+
+See image DP2
+
+in case of images we can normalize features as 
+
+(R-128)/128  	(G-128)/128	(B-128)/128
+
+for weight initialization we use normal distribution with small variance.
+
+Measuring performance:
+
+In most cases min of 30k examples are used for validation test and changes greater than 0.1% are significant for increase in accuracy.But in case of smaller datasets where we cannot save 30k for validation test, we can use cross validation there but it is computationaly expensive, hence it is suggested to collect larger datasets.But this assumption holds good only when all of the classes of dependent variable is same
+
+
+Stochastic gradient descent: Gradient descent cannot be scaled over larger datasets,because it depends on all the cases or examples of dataset hence its computationaly expensive and slow.Whereas in case Stochastic gradient descent instead of finding gradient descent on entire data set we take random samples from data and we find the gradient descent for that , we repeat this for several samples and using centeral limit theorem we can find the true value.
+
+
+Momentum technique for stochastic gradient descent(SGD): after the first iteration in SGD we can use the knowledge of in which direction we should move to reach the optimal value using monentum
+
+
+M = 0.9M + delta_L
+See IMage DP3,DP4
+DP4 says that we have to decrease the learning rate as move along the iterations
+
+
+SGD is called Black Magic because
+It has many hyper-parameters like:
+*initial learning rate
+* learning rate decay
+* momentum
+* batch size
+* weight initialization
+
+ADAGRAD is similar to SGD, it implicitly does initial learning rate and learning rate decay and momentum.Using ADAGRAD makes it easy to tune hyperparameters but it acts a bit worse than a precisely tuned SGD
+
+In case of Linear models: we have something called linear model complexity
+
+X	*	W	+	b--------> Y------->S(Y)
+N					   K
+
+so we'll have (N+1)*k parameters
+
+Linear models are stable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
