@@ -16,7 +16,7 @@ to get an identity matrix:
 
 to gets zeros:
 a = (5,5)
- Z = np.(a) # creates a 5X5 zero matrix
+ Z = np.zeros(a) # creates a 5X5 zero matrix
 
 Classifying with k-Nearest Neighbors:
 ---------------------------------------------------------------------
@@ -45,7 +45,7 @@ consider 2 points A = (x1,y1,z1,r1,k1.......,n1) ,B = (x2,y2,z2,r2,k2.......,n2)
 d  = sqrt((X2-X1)**2 + (Y2-Y1)**2 + (Z2-Z1)**2 + .... + (n2-n1)**2)
 
 
-error rate: Number of inputs algorithm wrongly classified given input wrongly divide by total number of inputs givent to the algo.
+error rate: Number of inputs algorithm wrongly classified given input , divide by total number of inputs givent to the algo.
 
 Parsing:The actual definition of "parse" in Wiktionary is "To split a file or other input into pieces of data that can be easily stored or manipulated." 
 
@@ -97,8 +97,183 @@ Drawbacks of KNN:
 kNN is an example of instance-based learning, where you need to have instances of data close at hand to perform the machine learning algorithm. The algorithm has to carry around the full dataset; for large datasets, this implies a large amount of storage. In addition, you need to calculate the distance measurement for every piece of data in the database, and this can be cumbersome.
 
 An additional drawback is that kNN doesn’t give you any idea of the underlying structure of the data; you have no idea what an “average” or “exemplar” instance from each class looks like.
+==============================================================
+ Source:https://saravananthirumuruganathan.wordpress.com/2010/05/17/a-detailed-introduction-to-k-nearest-neighbor-knn-algorithm/
 
 
+KNN is a non-parametric algorithm, which means that it does not make any assumptions on the underlying data distribution.Which is pretty usefull since in case of most of the real world data we don't know the underlying assumptions within data,in such cases KNN can help a lot
+
+It is also a lazy algorithm. What this means is that it does not use the training data points to do any generalization. In other words, there is no explicit training phase or it is very minimal. This means the training phase is pretty fast . Lack of generalization means that KNN keeps all the training data. More exactly, all the training data is needed during the testing phase. (Well this is an exaggeration, but not far from truth). This is in contrast to other techniques like SVM where you can discard all non support vectors without any problem.  Most of the lazy algorithms – especially KNN – makes decision based on the entire training data set (in the best case a subset of them).
+
+Each of the training data consists of a set of vectors and class label associated with each vector. In the simplest case , it will be either + or – (for positive or negative classes). But KNN , can work equally well with arbitrary number of classes.
+
+We are also given a single number "k" . This number decides how many neighbors (where neighbors is defined based on the distance metric) influence the classification. This is usually a odd number if the number of classes is 2. If k=1 , then the algorithm is simply called the nearest neighbor algorithm.
+
+
+Case 1 : k = 1 or Nearest Neighbor Rule
+This is the simplest scenario. Let x be the point to be labeled . Find the point closest to x . Let it be y. Now nearest neighbor rule asks to assign the label of y to x. This seems too simplistic and some times even counter intuitive. If you feel that this procedure will result a huge error , you are right – but there is a catch. This reasoning holds only when the number of data points is not very large.
+
+If the number of data points is very large, then there is a very high chance that label of x and y are same. An example might help – Lets say you have a (potentially) biased coin. You toss it for 1 million time and you have got head 900,000 times. Then most likely your next call will be head. We can use a similar argument here.
+
+Let me try an informal argument here -  Assume all points are in a D dimensional plane . The number of points is reasonably large. This means that the density of the plane at any point is fairly high. In other words , within any subspace there is adequate number of points. Consider a point x in the subspace which also has a lot of neighbors. Now let y be the nearest neighbor. If x and y are sufficiently close, then we can assume that probability that x and y belong to same class is fairly same 
+
+
+Case 2 : k = K or k-Nearest Neighbor Rule
+This is a straightforward extension of 1NN. Basically what we do is that we try to find the k nearest neighbor and do a majority voting. Typically k is odd when the number of classes is 2. Lets say k = 5 and there are 3 instances of C1 and 2 instances of C2. In this case , KNN says that new point has to labeled as C1 as it forms the majority. We follow a similar argument when there are multiple classes.
+
+One of the straight forward extension is not to give 1 vote to all the neighbors. A very common thing to do is weighted kNN where each point has a weight which is typically calculated using its distance. For eg under inverse distance weighting, each point has a weight equal to the inverse of its distance to the point to be classified. This means that neighboring points have a higher vote than the farther points.
+
+It is quite obvious that the accuracy *might* increase when you increase k but the computation cost also increases.
+
+Some Basic Observations
+1. If we assume that the points are d-dimensional, then the straight forward implementation of finding k Nearest Neighbor takes O(dn) time. 
+
+6. Choice of k is very critical – A small value of k means that noise will have a higher influence on the result. A large value make it computationally expensive and kinda defeats the basic philosophy behind KNN (that points that are near might have similar densities or classes ) .A simple approach to select k is set
+k = sqrt(n)
+
+
+Applications of KNN:
+
+KNN is a versatile algorithm and is used in a huge number of fields. Let us take a look at few uncommon and non trivial applications.
+
+1. Nearest Neighbor based Content Retrieval 
+This is one the fascinating applications of KNN – Basically we can use it in Computer Vision for many cases – You can consider handwriting detection as a rudimentary nearest neighbor problem. The problem becomes more fascinating if the content is a video – given a video find the video closest to the query from the database – Although this looks abstract, it has lot of practical applications – Eg : Consider ASL (American Sign Language)  . Here the communication is done using hand gestures.
+
+So lets say if we want to prepare a dictionary for ASL so that user can query it doing a gesture. Now the problem reduces to find the (possibly k) closest gesture(s) stored in the database and show to user. In its heart it is nothing but a KNN problem. One of the professors from my dept , Vassilis Athitsos , does research in this interesting topic – See Nearest Neighbor Retrieval and Classification for more details.
+
+2. Gene Expression 
+This is another cool area where many a time, KNN performs better than other state of the art techniques . In fact a combination of KNN-SVM is one of the most popular techniques there. This is a huge topic on its own and hence I will refrain from talking much more about it.
+
+3. Protein-Protein interaction and 3D structure prediction 
+Graph based KNN is used in protein interaction prediction. Similarly KNN is used in structure prediction.
+
+
+===================================================================
+Source:http://machinelearningmastery.com/k-nearest-neighbors-for-machine-learning/
+
+In this post you will discover the k-Nearest Neighbors (KNN) algorithm for classification and regression. After reading this post you will know.
+
+The model representation used by KNN.
+How a model is learned using KNN (hint, it’s not).
+How to make predictions using KNN
+The many names for KNN including how different fields refer to it.
+How to prepare your data to get the most from KNN.
+Where to look to learn more about the KNN algorithm.
+This post was written for developers and assumes no background in statistics or mathematics. The focus is on how the algorithm works and how to use it for predictive modeling problems. If you have any questions, leave a comment and I will do my best to answer.
+
+Let’s get started.
+
+
+KNN Model Representation
+
+The model representation for KNN is the entire training dataset.
+
+It is as simple as that.
+
+KNN has no model other than storing the entire dataset, so there is no learning required.
+
+Efficient implementations can store the data using complex data structures like k-d trees to make look-up and matching of new patterns during prediction efficient.
+
+Because the entire training dataset is stored, you may want to think carefully about the consistency of your training data. It might be a good idea to curate it, update it often as new data becomes available and remove erroneous and outlier data.
+
+Making Predictions with KNN
+
+KNN makes predictions using the training dataset directly.
+
+Predictions are made for a new instance (x) by searching through the entire training set for the K most similar instances (the neighbors) and summarizing the output variable for those K instances. For regression this might be the mean output variable, in classification this might be the mode (or most common) class value.
+
+To determine which of the K instances in the training dataset are most similar to a new input a distance measure is used. For real-valued input variables, the most popular distance measure is Euclidean distance.
+
+Euclidean distance is calculated as the square root of the sum of the squared differences between a new point (x) and an existing point (xi) across all input attributes j.
+
+EuclideanDistance(x, xi) = sqrt( sum( (xj – xij)^2 ) )
+
+Other popular distance measures include:
+
+Hamming Distance: Calculate the distance between binary vectors (more).
+Manhattan Distance: Calculate the distance between real vectors using the sum of their absolute difference. Also called City Block Distance (more).
+Minkowski Distance: Generalization of Euclidean and Manhattan distance (more).
+There are many other distance measures that can be used, such as Tanimoto, Jaccard, Mahalanobis and cosine distance. You can choose the best distance metric based on the properties of your data. If you are unsure, you can experiment with different distance metrics and different values of K together and see which mix results in the most accurate models.
+
+Euclidean is a good distance measure to use if the input variables are similar in type (e.g. all measured widths and heights). Manhattan distance is a good measure to use if the input variables are not similar in type (such as age, gender, height, etc.).
+
+The value for K can be found by algorithm tuning. It is a good idea to try many different values for K (e.g. values from 1 to 21) and see what works best for your problem.
+
+The computational complexity of KNN increases with the size of the training dataset. For very large training sets, KNN can be made stochastic by taking a sample from the training dataset from which to calculate the K-most similar instances.
+
+KNN has been around for a long time and has been very well studied. As such, different disciplines have different names for it, for example:
+
+Instance-Based Learning: The raw training instances are used to make predictions. As such KNN is often referred to as instance-based learning or a case-based learning (where each training instance is a case from the problem domain).
+Lazy Learning: No learning of the model is required and all of the work happens at the time a prediction is requested. As such, KNN is often referred to as a lazy learning algorithm.
+Non-Parametric: KNN makes no assumptions about the functional form of the problem being solved. As such KNN is referred to as a non-parametric machine learning algorithm.
+KNN can be used for regression and classification problems.
+
+KNN for Regression
+
+When KNN is used for regression problems the prediction is based on the mean or the median of the K-most similar instances.
+
+KNN for Classification
+
+When KNN is used for classification, the output can be calculated as the class with the highest frequency from the K-most similar instances. Each instance in essence votes for their class and the class with the most votes is taken as the prediction.
+
+Class probabilities can be calculated as the normalized frequency of samples that belong to each class in the set of K most similar instances for a new data instance. For example, in a binary classification problem (class is 0 or 1):
+
+p(class=0) = count(class=0) / (count(class=0)+count(class=1))
+
+If you are using K and you have an even number of classes (e.g. 2) it is a good idea to choose a K value with an odd number to avoid a tie. And the inverse, use an even number for K when you have an odd number of classes.
+
+Ties can be broken consistently by expanding K by 1 and looking at the class of the next most similar instance in the training dataset.
+
+Curse of Dimensionality
+
+KNN works well with a small number of input variables (p), but struggles when the number of inputs is very large.
+
+Each input variable can be considered a dimension of a p-dimensional input space. For example, if you had two input variables x1 and x2, the input space would be 2-dimensional.
+
+As the number of dimensions increases the volume of the input space increases at an exponential rate.
+
+In high dimensions, points that may be similar may have very large distances. All points will be far away from each other and our intuition for distances in simple 2 and 3-dimensional spaces breaks down. This might feel unintuitive at first, but this general problem is called the “Curse of Dimensionality“.
+
+Best Prepare Data for KNN
+
+Rescale Data: KNN performs much better if all of the data has the same scale. Normalizing your data to the range [0, 1] is a good idea. It may also be a good idea to standardize your data if it has a Gaussian distribution.
+Address Missing Data: Missing data will mean that the distance between samples can not be calculated. These samples could be excluded or the missing values could be imputed.
+Lower Dimensionality: KNN is suited for lower dimensional data. You can try it on high dimensional data (hundreds or thousands of input variables) but be aware that it may not perform as well as other techniques. KNN can benefit from feature selection that reduces the dimensionality of the input feature space.
+Further Reading
+
+If you are interested in implementing KNN from scratch in Python, checkout the post:
+
+Tutorial To Implement k-Nearest Neighbors in Python From Scratch
+Below are some good machine learning texts that cover the KNN algorithm from a predictive modeling perspective.
+
+Applied Predictive Modeling, Chapter 7 for regression, Chapter 13 for classification.
+Data Mining: Practical Machine Learning Tools and Techniques, page 76 and 128
+Doing Data Science: Straight Talk from the Frontline, page 71
+Machine Learning, Chapter 8
+Also checkout K-Nearest Neighbors on Wikipedia.
+
+Summary
+
+In this post you discovered the KNN machine learning algorithm. You learned that:
+
+KNN stores the entire training dataset which it uses as its representation.
+KNN does not learn any model.
+KNN makes predictions just-in-time by calculating the similarity between an input sample and each training instance.
+There are many distance measures to choose from to match the structure of your input data.
+That it is a good idea to rescale your data, such as using normalization, when using KNN.
+If you have any questions about this post or the KNN algorithm ask in the comments and I will do my best to answer.
+
+
+
+
+
+
+
+
+
+
+
+============================================================
 
 DECISION TREES:
 ================
