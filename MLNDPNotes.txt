@@ -359,6 +359,174 @@ A decision tree classifier is just like a work-flow diagram with the terminating
 
 Cleverly applying Matplotlib’s annotations, you can turn our tree data into an easily understood chart. The Python Pickle module can be used for persisting our tree. The contact lens data showed that decision trees can try too hard and overfit a dataset. This overfitting can be removed by pruning the decision tree, combining adjacent leaf nodes that don’t provide a large amount of information gain. There are other decision tree–generating algorithms. The most popular are C4.5 and CART. CART will be addressed in chapter 9 when we use it for regression.
 
+Source:http://machinelearningmastery.com/classification-and-regression-trees-for-machine-learning/
+
+Classification And Regression Trees for Machine Learning
+
+Decision Trees are an important type of algorithm for predictive modeling machine learning.
+
+The classical decision tree algorithms have been around for decades and modern variations like random forest are among the most powerful techniques available.
+
+In this post you will discover the humble decision tree algorithm known by it’s more modern name CART which stands for Classification And Regression Trees. After reading this post, you will know:
+
+The many names used to describe the CART algorithm for machine learning.
+The representation used by learned CART models that is actually stored on disk.
+How a CART model can be learned from training data.
+How a learned CART model can be used to make predictions on unseen data.
+Additional resources that you can use to learn more about CART and related algorithms.
+If you have taken an algorithms and data structures course, it might be hard to hold you back from implementing this simple and powerful algorithm. And from there, you’re a small step away from your own implementation of Random Forests.
+
+Let’s get started.
+
+Decision Trees
+
+Classification and Regression Trees or CART for short is a term introduced by Leo Breiman to refer to Decision Tree algorithms that can used for classification or regression predictive modeling problems.
+
+Classically, this algorithm is referred to as “decision trees”, but on some platforms like R they are referred to by the more modern term CART.
+
+The CART algorithm provides a foundation for important algorithms like bagged decision trees, random forest and boosted decision trees.
+
+
+CART Model Representation
+
+The representation for the CART model is a binary tree.
+
+This is your binary tree from algorithms and data structures, nothing too fancy. Each root node represents a single input variable (x) and a split point on that variable (assuming the variable is numeric).
+
+The leaf nodes of the tree contain an output variable (y) which is used to make a prediction.
+
+Given a dataset with two inputs (x) of height in centimeters and weight in kilograms the output of sex as male or female, below is a crude example of a binary decision tree (completely fictitious for demonstration purposes only).
+
+See IMAGE CART1
+
+The tree can be stored to file as a graph or a set of rules. For example, below is the above decision tree as a set of rules.
+
+If Height > 180 cm Then Male
+If Height <= 180 cm AND Weight > 80 kg Then Male
+If Height <= 180 cm AND Weight <= 80 kg Then Female
+Make Predictions With CART Models
+
+With the binary tree representation of the CART model described above, making predictions is relatively straightforward.
+
+Given a new input, the tree is traversed by evaluating the specific input started at the root node of the tree.
+
+A learned binary tree is actually a partitioning of the input space. You can think of each input variable as a dimension on an p-dimensional space. The decision tree split this up into rectangles (when p=2 input variables) or some kind of hyper-rectangles with more inputs.
+
+New data is filtered through the tree and lands in one of the rectangles and the output value for that rectangle is the prediction made by the model. This gives you some feeling for the type of decisions that a CART model is capable of making, e.g. boxy decision boundaries.
+
+For example, given the input of [height = 160 cm, weight = 65 kg], we would traverse the above tree as follows:
+
+Height > 180 cm: No
+Weight > 80 kg: No
+Therefore: Female
+
+Learn a CART Model From Data
+
+Creating a CART model involves selecting input variables and split points on those variables until a suitable tree is constructed.
+
+The selection of which input variable to use and the specific split or cut-point is chosen using a greedy algorithm to minimize a cost function. Tree construction ends using a predefined stopping criterion, such as a minimum number of training instances assigned to each leaf node of the tree.
+
+Greedy Splitting
+
+Creating a binary decision tree is actually a process of dividing up the input space. A greedy approach is used to divide the space called recursive binary splitting.
+
+This is a numerical procedure where all the values are lined up and different split points are tried and tested using a cost function. The split with the best cost (lowest cost because we minimize cost) is selected.
+
+All input variables and all possible split points are evaluated and chosen in a greedy manner (e.g. the very best split point is chosen each time).
+
+For regression predictive modeling problems the cost function that is minimized to choose spit points is the sum squared error across all training samples that fall within the rectangle:
+
+sum(y – prediction)^2
+
+Where y is the output for the training sample and prediction is the predicted output for the rectangle.
+
+For classification the Gini cost function is used which provides an indication of how “pure” the leaf nodes are (how mixed the training data assigned to each node is).
+
+G = sum(pk * (1 – pk))
+
+Where G is the Gini cost over all classes, pk are the number of training instances with class k in the rectangle of interest. A node that has all classes of the same type (perfect class purity) will have G=0, where as a G that has a 50-50 split of classes for a binary classification problem (worst purity) will have a G=0.5.
+
+Stopping Criterion
+
+The recursive binary splitting procedure described above needs to know when to stop splitting as it works its way down the tree with the training data.
+
+The most common stopping procedure is to use a minimum count on the number of training instances assigned to each leaf node. If the count is less than some minimum then the split is not accepted and the node is taken as a final leaf node.
+
+The count of training members is tuned to the dataset, e.g. 5 or 10. It defines how specific to the training data the tree will be. Too specific (e.g. a count of 1) and the tree will overfit the training data and likely have poor performance on the test set.
+
+Pruning The Tree
+
+The stopping criterion is important as it strongly influences the performance of your tree. You can use pruning after learning your tree to further lift performance.
+
+The complexity of a decision tree is defined as the number of splits in the tree. Simpler trees are preferred. They are easy to understand (you can print them out and show them to subject matter experts), and they are less likely to overfit your data.
+
+The fastest and simplest pruning method is to work through each leaf node in the tree and evaluate the effect of removing it using a hold-out test set. Leaf nodes are removed only if it results in a drop in the overall cost function on the entire test set. You stop removing nodes when no further improvements can be made.
+
+More sophisticated pruning methods can be used such as cost complexity pruning (also called weakest link pruning) where a learning parameter (alpha) is used to weigh whether nodes can be removed based on the size of the sub-tree.
+
+Data Preparation for CART
+
+CART does not require any special data preparation other than a good representation of the problem.
+
+Further Reading
+
+This section lists some resources that you can refer to if you are looking to go deeper with CART.
+
+Classification and Regression Trees
+Below are some good machine learning texts that describe the CART algorithm from a machine learning perspective.
+
+An Introduction to Statistical Learning: with Applications in R, Chapter 8
+Applied Predictive Modeling, Chapter 8 and 14
+Data Mining: Practical Machine Learning Tools and Techniques, chapter 6.
+Summary
+
+In this post you have discovered the Classification And Regression Trees (CART) for machine learning. You learned:
+
+The classical name Decision Tree and the more Modern name CART for the algorithm.
+The representation used for CART is a binary tree.
+Predictions are made with CART by traversing the binary tree given a new input record.
+The tree is learned using a greedy algorithm on the training data to pick splits in the tree.
+Stopping criteria define how much tree learns and pruning can be used to improve a learned tree.
+
+Source: Sklearn
+
+Decision Trees (DTs) are a non-parametric supervised learning method used for classification and regression. The goal is to create a model that predicts the value of a target variable by learning simple decision rules inferred from the data features.
+For instance, in the example below, decision trees learn from data to approximate a sine curve with a set of if-then-else decision rules. The deeper the tree, the more complex the decision rules and the fitter the model.
+
+Some advantages of decision trees are:
+
+Simple to understand and to interpret. Trees can be visualised.
+Requires little data preparation. Other techniques often require data normalisation, dummy variables need to be created and blank values to be removed. Note however that this module does not support missing values.
+
+The cost of using the tree (i.e., predicting data) is logarithmic in the number of data points used to train the tree.
+Able to handle both numerical and categorical data. Other techniques are usually specialised in analysing datasets that have only one type of variable. See algorithms for more information.
+Able to handle multi-output problems.
+
+Uses a white box model. If a given situation is observable in a model, the explanation for the condition is easily explained by boolean logic. By contrast, in a black box model (e.g., in an artificial neural network), results may be more difficult to interpret.
+
+Possible to validate a model using statistical tests. That makes it possible to account for the reliability of the model.
+Performs well even if its assumptions are somewhat violated by the true model from which the data were generated.
+
+The disadvantages of decision trees include:
+
+Decision-tree learners can create over-complex trees that do not generalise the data well. This is called overfitting. Mechanisms such as pruning (not currently supported), setting the minimum number of samples required at a leaf node or setting the maximum depth of the tree are necessary to avoid this problem.
+
+Decision trees can be unstable because small variations in the data might result in a completely different tree being generated. This problem is mitigated by using decision trees within an ensemble.
+The problem of learning an optimal decision tree is known to be NP-complete under several aspects of optimality and even for simple concepts. Consequently, practical decision-tree learning algorithms are based on heuristic algorithms such as the greedy algorithm where locally optimal decisions are made at each node. Such algorithms cannot guarantee to return the globally optimal decision tree. This can be mitigated by training multiple trees in an ensemble learner, where the features and samples are randomly sampled with replacement.
+There are concepts that are hard to learn because decision trees do not express them easily, such as XOR, parity or multiplexer problems.
+Decision tree learners create biased trees if some classes dominate. It is therefore recommended to balance the dataset prior to fitting with the decision tree.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 NAIVE BAYES ALGO:
