@@ -1,59 +1,1041 @@
-*To get the the column names of the pandas data frame use: dataframename.columns.values
+Why do we need arrays?
+The abstract mathematical concepts of matrices and vectors are central to many scientific problems. Arrays provide a direct semantic link to these concepts. Indeed, whenever a piece of mathematical literature makes reference to a matrix, one can safely think of an array as the software abstraction that represents the matrix. In scientific literature, an expression such as Aij is typically used to denote the element in the ith row and jth column of array A. The corresponding expression in NumPy would simply be A[i,j]. For matrix operations, NumPy arrays also support vectorization (details are addressed in Chapter 3, Using NumPy Arrays), which speeds up execution greatly. Vectorization makes the code more concise, easier to read, and much more akin to mathematical notation. Like matrices, arrays can be multidimensional too. Every element of an array is addressable through a set of integers called indices, and the process of accessing elements of an array with sets of integers is called indexing. This functionality can indeed be implemented without using arrays, but this would be cumbersome and quite unnecessary.
 
-*To access any column from a dataframe use:
-dataframename.columnname
+memory overhead: is the memory consumed when a program is being executed
 
-*To check wether a column has NaN or None value use
-pd.isnull(object)
+Numpy is more efficient wrt to speed and memory.Because np's has the best data structures.Since np's are statically typed and homogenous,fast mathematical operations can be implemented in compiled languages like C or Fortan
 
-ex:pd.isnull(dataframename.colName)
+ The following is a brief summary of what the np module contains
 
-where object --> column name or list
-pd.isnull() returns a list of True and False
+Submodule		Contents
+=========		=========
+numpy.core		Basic objects
 
-use pd.notnull to find the non null values
+lib			Additional utilities
 
-*to get the information like the datatype of columns ,number of non null entries in dataframe,name of each column of dataframe use
-dataframename.info()
+linalg			Basic Linear Algebra
 
-*to get the first few entries of dataframe use 
-dataframename.head()
-and to get few entries from bottom side use
-dataframname.tail()
+fft			Discrete Fourier transform
 
-*to get the descriptive stats of the dataframe use
-dataframename.describe()
+random			random number generators
 
-*to create a list of equal spaced numbers between two numbers use
-np.linspace(lowerlimit,upperlimit,number_of_parts)
+distutils		Enhanced build and distribution
 
-Ex: np.linspace(-5,5,100)#divide the space beteween -5 and  into 100 parts
+testing			Unit testing
 
-*given the descriptive stats, we can draw the normal distribution like
+f2p			Automatic wrapping of the fortran code
+-------------------------------------------------------------------
+The Numpy ndarray object:
+=========================
+Array-oriented computing is the very heart of computational sciences. It is something that most Python programmers are not accustomed to. Though list or dictionary comprehension is relative to an array and sometimes used similarly to an array, there is a huge difference between a list/dictionary and an array in terms of performance and manipulation.
 
-import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.mlab as mlab
-import math
+Getting started with numpy.ndarray:
 
-mu = 0
-variance = 1
-sigma = math.sqrt(variance)
-x = np.linspace(-3, 3, 100)
-plt.plot(x,mlab.normpdf(x, mu, sigma))
+In [1]: import numpy as np  
+In [2]: x = np.array([[1,2,3],[2,3,4]])  
+In [3]: print(x)
 
-plt.show()
+NumPy shares the names of its functions with functions in other modules, such as the math module in the Python standard library. Using imports like the following there is not recommended:
 
-*To plot histogram of a column values use
-pd.columnname.hist()
+from numpy import *
 
-*We can use the describe in a clever way to get insight about the features 
-dataframe.describe(percentiles = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.99])
-
-by using describe() like this and observing the values of the features in between these percentiles we'can gain a lot of information about feature's behaviour
+As it may overwrite many functions that are already in the global namespace, which is not recommended. This may lead to unexpected behavior from your code and may introduce very subtle bugs in it . This may also create conflicts in the code itself, (example numPy has any and will cause conflicts with the system any keyword) and may cause confusion when reviewing or debugging a piece of code. Therefore, it is important and recommended to always follow the import numPy with explicit name such as np convention used in the first line: , — import numpy as np, which is the standard convention used for the purpose of for importing, as it helps the a developer figure out where a function comes from. This can prevent a lot of confusion in large programs..
 
 
 
+NumPy arrays can be created in a number of ways, as we shall see. One of the simplest ways of creating arrays is using the array function. Notice that we passed a list of lists to the function, and the constituent lists were equal in length. Each constituent list became a row in the array, and the elements of these lists populated the columns of the resulting array. The array function can be called on lists or even nested lists. Since the level of nesting in our input here was two, the resulting array is two-dimensional. This means that the array can be indexed with a set of two integers. The simplest way of calculating the dimensionality of an array is by checking the ndim attribute of the array:
+
+
+In [4]: x.ndim 
+ 
+Out [4]: 2 
+
+In [2]: x = np.array([[1,2,3],[9,8,7],[8,5,2]])
+
+In [3]: x.ndim
+Out[3]: 2
+
+
+In [9]: x = np.array([[[1,2],[3,4] ],[[5,6],[7,8]  ]  ])
+
+In [11]: x.ndim
+Out[11]: 3
+
+This can also be accomplished in a different (and indirect) way-by checking the shape attribute of the array. The dimensionality of the array will be equal to how many numbers you see in the shape attribute. (Note that this, however, is not the purpose of the shape attribute.):
+
+In [14]: x 
+Out[14]: 
+array([[[1, 2],
+        [3, 4]],
+
+       [[5, 6],
+        [7, 8]]])
+
+In [15]: x.shape
+Out[15]: (2, 2, 2)
+
+
+unlike MATLAB and R, the indexing of NumPy arrays is zero-based; that is, the first element of a NumPy array is indexed by a zero and the last element is indexed by the integer n-1, where n is the length of the array along the respective dimension. Thus, in the case of the array we just created, the element in the top-left corner of the array can be accessed using a pair of zeros, and the one in the bottom-right corner can be accessed with indices (1,2):
+
+
+In [6]: x  
+Out[6]: array([[1, 2, 3],[2, 3, 4]])  
+
+In [7]: x[0,0]  
+Out[7]: 1  
+
+In [8]: x[1,2]  
+Out[8]: 4 
+
+The ndarray object has a lot of useful methods. To get a list of the methods that can be called on an ndarray object, type the array variable (in the preceding example, it's x) in the IPython prompt and press Tab
+
+See IMAGE np1
+
+Indexing NumPy arrays, in many ways, is very similar to indexing lists or tuples. There are some differences, which will become apparent as we proceed. To start with, let's create an array that has 100 x 100 dimensions:
+
+In [9]: x = np.random.random((100, 100)) 
+
+Simple integer indexing works by typing indices within a pair of square brackets and placing this next to the array variable. This is a widely used Python construct. Any object that has a __getitem__ method will respond to such indexing. Thus, to access the element in the 42nd row and 87th column, just type this:
+
+In [10]: y = x[42, 87] 
+
+Like lists and other Python sequences, the use of a colon to index a range of values is also supported. The following statement will print the k th row of the x matrix.
+
+In [11]: print(x[k, :]) 
+
+
+The colon can be thought of as an all elements character. So, the preceding statement actually means Print all the characters for the kth row. Similarly, a column can be accessed with x[:,k]. Reversing an array is also similar to reversing a list, such as x[::-1].
+
+The indexed portion of an array is also called a slice of an array, which creates a copy of a port or the whole array (we will cover copies and views in a later section). In the context of an array, the words "slicing" and "indexing" can generally be used interchangeably.
+
+See IMAGE np2
+
+Memory Layout of ndarray:
+=========================
+
+A particularly interesting attribute of the ndarray object is flags. Type the following code:
+
+In [12]: x.flags 
+It should produce something like this:
+
+Out[12]: 
+  C_CONTIGUOUS : True 
+  F_CONTIGUOUS : False 
+  OWNDATA : True 
+  WRITEABLE : True 
+  ALIGNED : True 
+  UPDATEIFCOPY : False 
+
+The flags attribute holds information about the memory layout of the array. The C_CONTIGUOUS field in the output indicates whether the array was a C-style array. This means that the indexing of this array is done like a C array. This is also called row-major indexing in the case of 2D arrays. This means that, when moving through the array, the row index is incremented first, and then the column index is incremented. In the case of a multidimensional C-style array, the last dimension is incremented first, followed by the last but one, and so on.
+
+Similarly, the F_CONTIGUOUS attribute indicates whether the array is a Fortran-style array. Such an array is said to have column-major indexing (R, Julia, and MATLAB use column-major arrays). This means that, when moving through the array, the first index (along the column) is incremented first.
+
+Knowing the difference between indexing styles is important, especially for large arrays, because operations on arrays can be significantly sped up if the indexing is applied in the right way. Let's demonstrate this with an exercise.
+
+Declare an array, as follows:
+
+In [13]: c_array = np.random.rand(10000, 10000) 
+
+This will produce a variable called c_array, which is a 2D array with a hundred million random numbers as its elements. (We used the rand function from the random submodule in NumPy, which we will deal with in a later section). Next, create a Fortran-styled array from c_array, as follows:
+
+In [14]: f_array = np.asfortranarray(c_array) 
+You can check whether c_array and f_array are indeed C and Fortran-styled, respectively, by reading their flags attributes. Next, we define the following two functions:
+
+In [15]: def sum_row(x):
+         '''
+         Given an array `x`, return the sum of its zeroth row.
+         '''
+         return np.sum(x[0, :])
+In [16]: def sum_col(x):
+         '''
+         Given an array `x`, return the sum of its zeroth column.
+         '''
+         return np.sum(x[:, 0])
+
+
+Now, let's test the performance of the two functions on both the arrays using IPython's %timeit magic function:
+
+NOTE
+There are a handful of magic functions that IPython provides to help us understand the code better; for further details, refer to: http://ipython.readthedocs.org/en/stable/interactive/magics.html?highlight=magic.
+
+In [17]: %timeit sum_row(c_array) 
+10000 loops, best of 3: 21.2 µs per loop 
+ 
+In [18]: %timeit sum_row(f_array) 
+10000 loops, best of 3: 157 µs per loop 
+ 
+In [19]: %timeit sum_col(c_array) 
+10000 loops, best of 3: 162 µs per loop 
+ 
+In [20]: %timeit sum_col(f_array) 
+10000 loops, best of 3: 21.4 µs per loop 
+
+As we can see, summing up the row of a C array is much faster than summing up its column. This is because, in a C array, elements in a row are laid out in successive memory locations. The opposite is true for a Fortran array, where the elements of a column are laid out in consecutive memory locations.
+
+TIP
+Note that the exact figures may vary depending on the operating system, RAM, and the Python distribution being used, but the relative order between the execution times should remain the same.
+
+This is an important distinction and allows you to suitably arrange your data in an array, depending on the kind of algorithm or operation you are performing. Knowing this distinction can help you speed up your code by orders of magnitude.
+
+Views and copies
+There are primarily two ways of accessing data by slicing and indexing. They are called copies and views: you can either access elements directly from an array, or create a copy of the array that contains only the accessed elements. Since a view is a reference of the original array (in Python, all variables are references), modifying a view modifies the original array too. This is not true for copies.
+
+The may_share_memory function in NumPy miscellaneous routines can be used to determine whether two arrays are copies or views of each other. While this method does the job in most cases, it is not always reliable, since it uses heuristics. It may return incorrect results too. For introductory purposes, however, we shall take it for granted.
+
+Generally, slicing an array creates a view and indexing it creates a copy. Let us study these differences through a few code snippets. First, let's create a random 100x10 array.
+
+In [21]: x = np.random.rand(100,10) 
+
+Now, let us extract the first five rows of the array and assign them to variable y.
+
+In [22]: y = x[:5, :] 
+Let us see if y is a view of x.
+
+In [23]: np.may_share_memory(x, y) 
+ 
+Out[23]: True 
+
+Now let us modify the array y and see how it affects x. Set all the elements of y to zero:
+
+In [24]: y[:] = 0 
+ 
+In [25]: print(x[:5, :]) 
+Out[25]: [[ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.] 
+[ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.] 
+[ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.] 
+[ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.] 
+          [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]] 
+
+The code snippet prints out five rows of zeros. This is because y was just a view, a reference to x.
+
+Next, let's create a copy to see the difference. We use the preceding method that uses a random function to create the x array, but this time we initialize the y array using numpy.empty to create an empty array first and then copy the values from x to y. So, now y is not a view/reference of x anymore; it's an independent array but has the same values as part of x. Let's use the may_share_memory function again to verify that y is the copy of x:
+
+In [26]: x = np.random.rand(100,10) 
+ 
+In [27]: y = np.empty([5, 10]) 
+ 
+In [28]: y[:] = x[:5, :] 
+ 
+In [29]: np.may_share_memory(x, y) 
+Out[29]: False 
+
+Let's alter the value in y and check whether the value of x changes as well:
+
+In [30]: y[:] = 0 
+In [31]: print(x[:5, :]) 
+
+You should see the preceding snippet print out five rows of random numbers as we initialized x, so changing y to 0 didn't affect x.
+
+Creating arrays:
+Arrays can be created in a number of ways, for instance from other data structures, by reading files on disk, or from the Web. For the purposes of this chapter, whose aim is to familiarize us with the core characteristics of a NumPy array, we will be creating arrays using lists or various NumPy functions.
+
+Creating arrays from lists:
+
+The simplest way to create an array is using the array function. To create a valid array object, arguments to array functions need to adhere to at least one of the following conditions:
+
+1.It has to be a valid iterable value or sequence, which may be nested
+
+2.It must have an __array__ method that returns a valid numpy array
+
+
+Consider the following snippet:
+
+In [32]: x = np.array([1, 2, 3]) 
+ 
+In [33]: y = np.array(['hello', 'world']) 
+
+
+The first condition is always true for Python lists and tuples. When creating an array from lists or tuples, the input may consist of different (heterogeneous) data types. The array function, however, will normally cast all input elements into the most suitable data type required for the array. For example, if a list contains both floats and integers, the resulting array will be of type float. If it contains an integer and a boolean, the resulting array will consist of integers. As an exercise, try creating arrays from lists that contain arbitrary data types.
+
+One of the most handy ways of creating lists, and therefore arrays, of integers is using the range function:
+
+In [34]: x = range(5) 
+ 
+In [35]: y = np.array(x) 
+NumPy has a convenient function, called arange, that combines the functionality of the range and array functions. The preceding two lines of code are equivalent to this:
+
+In [36]: x = np.arange(5) 
+For multidimensional arrays, the input lists simply have to be nested, as follows:
+
+In [37]: x = np.array([[1, 2, 3],[4, 5, 6]]) 
+ 
+In [38]: x.ndim 
+Out[38]: 2 
+ 
+In [39]: x.shape 
+Out[39]: (2, 3) 
+The preceding examples simply show how to create a NumPy array from an existing array or from a range of numbers. Next, we will talk about creating an array with random numbers.
+
+Creating random arrays
+The random module in NumPy provides various functions to create random arrays of any data type. We will be using this module very frequently throughout the book to demonstrate the working of functions in NumPy. The random module broadly consists of functions that:
+
+Create random arrays
+Create random permutations of arrays
+Generate arrays with specific probability distributions
+We shall go over each of these in detail through out the book. For the purposes of this chapter, we will be focusing on two important functions in the random module-rand and random. Here is a simple snippet demonstrating the use of both these functions:
+
+In [40]: x = np.random.rand(2, 2, 2) 
+ 
+In [41]: print(x.shape) 
+Out[41]: (2, 2, 2) 
+ 
+In [42]: shape_tuple = (2, 3, 4) 
+ 
+In [43]: y = np.random.random(shape_tuple) 
+ 
+In [44]: print(y.shape) 
+Out[44]: (2, 3, 4) 
+Notice the subtle difference between the arguments passed to the two functions. The random function accepts a tuple as an argument and creates an array with dimensionality equal to the length of the tuple. The respective dimensions have their lengths equal to the elements of the tuple. The rand function, on the other hand, takes any number of integer arguments and returns a random array such that its dimensionality is equal to the number of integer arguments passed to the function, and the respective dimensions have lengths equal to the values of the integer arguments. Thus, x in the preceding snippet is a three-dimensional array (the number of the arguments passed to the function), and each of the three dimensions of x has a length of 2 (the value of each of the arguments). rand is a convenience function for random. Both these functions can be used interchangeably, provided the arguments that are passed are respectively valid for either function.
+
+These two functions, however, have a major drawback-they can only create arrays of floats. If we wanted an array of random integers, we would have to cast the output of these functions into integers. But this, too, is a significant problem, since NumPy's int function truncates a float to the nearest integer toward zero (this is an equivalent of the floor function). Therefore, casting the output of rand or random to integers will always return an array of zeros since both these functions return floats within the interval (0,1). The problem can be solved using the randint function, as follows:
+
+In [45]: LOW, HIGH = 1, 11 
+ 
+In [46]: SIZE = 10 
+ 
+In [47]: x = np.random.randint(LOW, HIGH, size=SIZE) 
+ 
+In [48]: print(x) 
+Out[48]: [ 6  9 10  7  9  5  8  8  9  3] 
+The randint function takes three arguments, of which two are optional. The first argument denotes the desired lower limit of the output values, and the second optional argument denotes the (exclusive) upper limit of the output values. The optional size argument is a tuple that determines the shape of the output array.
+
+There are many other functions, such as seeding the random number generator in the random submodule. For details, refer to:
+
+http://docs.scipy.org/doc/numpy/reference/routines.random.html
+
+Other arrays
+There are a few other array creation functions, such as zeros(), ones(), eye(), and others (similar to the ones in MATLAB) that can be used to create NumPy arrays. Their use is fairly straightforward. Arrays can also be populated from files or from the Web. We shall deal with file I/O in the next chapter.
+
+
+Array data types
+Data types are another important intrinsic aspect of a NumPy array alongside its memory layout and indexing. The data type of a NumPy array can be found by simply checking the dtype attribute of the array. Try out the following examples to check the data types of different arrays:
+
+In [49]: x = np.random.random((10,10)) 
+ 
+In [50]: x.dtype 
+Out[50]: dtype('float64') 
+In [51]: x = np.array(range(10)) 
+ 
+In [52]: x.dtype 
+Out[52]: dtype('int32') 
+ 
+In [53]: x = np.array(['hello', 'world']) 
+ 
+In [54]: x.dtype 
+Out [54]: dtype('S5') 
+Many array creation functions provide a default array data type. For example, the np.zeros and np.ones functions create arrays that are full of floats by default. But it is possible to make them create arrays of other data types too. Consider the following examples that demonstrate how to use the dtype argument to create arrays of arbitrary data types.
+
+In [55]: x = np.ones((10, 10), dtype=np.int) 
+ 
+In [56]: x.dtype 
+Out[56]: dtype('int32') 
+ 
+In [57]: x = np.zeros((10, 10), dtype='|S1') 
+ 
+In [58]: x.dtype 
+Out[58]: dtype('S1') 
+For a complete list of data types supported by NumPy, refer to http://docs.scipy.org/doc/numpy/user/basics.types.html .
+
+======================================================================
+
+Using Numpy Arrays:
+
+The beauty of NumPy Arrays is that you can use array indexing and slicing to quickly access your data or perform a computation while keeping the efficiency as the C arrays. There are also plenty of mathematical operations that are supported. In this chapter, we will take an in-depth look at using NumPy Arrays. After this chapter, you will feel comfortable using NumPy Arrays and the bulk of their functionality.
+
+Here is a list of topics that will be covered in this chapter:
+
+Basic operations and the attributes of NumPy Arrays
+Universal functions (ufuncs) and helper functions
+Broadcasting rules and shape manipulation
+Masking NumPy Arrays
+Vectorized operations
+
+All NumPy operations are vectorized, where you apply operations to the whole array instead of on each element individually. This is not just neat and handy but also improves the performance of computation compared to using loops. In this section, we will experience the power of NumPy vectorized operations. A key idea worth keeping in mind before we start exploring this subject is to always think of entire sets of arrays instead of each element; this will help you enjoy learning about NumPy Arrays and their performance. Let's start by doing some simple calculations with scalars and between NumPy Arrays:
+
+In [1]: import numpy as np 
+In [2]: x = np.array([1, 2, 3, 4]) 
+In [3]: x + 1 
+Out[3]: array([2, 3, 4, 5]) 
+All the elements in the array are added by 1 simultaneously. This is very different from Python or most other programming languages. The elements in a NumPy Array all have the same dtype; in the preceding example, this is numpy.int (this is either 32 or 64-bit depending on the machine); therefore, NumPy can save time on checking the type of each element at runtime, which, ordinarily, is done by Python. So, just apply these arithmetic operations:
+
+In [4]: y = np.array([-1, 2, 3, 0]) 
+In [5]: x * y 
+Out[5]: array([-1,  4,  9,  0]) 
+Two NumPy Arrays are multiplied element by element. In the preceding example, two arrays are of equal shape, so no broadcasting is applied here (we will explain different shapes, NumPy Array operations, and broadcasting rules in a later section.) The first element in array x is multiplied by the first element in array y and so on. One important point to note here is that the arithmetic operations between two NumPy Arrays are not matrix multiplications. The result still returns the same shape of NumPy Arrays. A matrix multiplication in NumPy will use numpy.dot(). Take a look at this example:
+
+In [6]: np.dot(x, y) 
+Out[6]: 12 
+NumPy also supports logic comparison between two arrays, and the comparison is vectorized as well. The result returns a Boolean, and NumPy Array indicates which element in both arrays is equal. If two different shapes of arrays are compared, the result would only return one False, which indicates that the two arrays are different, and would really compare each element:
+
+In [7]: x == y 
+Out[7]: array([False,  True,  True, False], dtype=bool) 
+From the preceding examples, we get an insight into NumPy's element-wise operations, but what's the benefit of using them? How can we know that an optimization has been made through these NumPy operations? We will use the %timeit function in IPython, which was introduced in the last chapter, to show you the difference between NumPy operations and the Python for loop:
+
+In [8]: x = np.arange(10000) 
+In [9]: %timeit x + 1 
+100000 loops, best of 3: 12.6 µs per loop 
+In [10]: y = range(10000) 
+In [11]: %timeit [i + 1 for i in y] 
+1000 loops, best of 3: 458 µs per loop 
+Two variables, x and y, are the same length and do the same kind of work, which includes adding a value to all the elements in the arrays. With the help of NumPy operations, the performance is way faster than an ordinary Python for loop (we use a list comprehension here for neat code, which is faster than an ordinary Python for loop, but still, NumPy has better performance when compared to the ordinary Python for loop). Knowing this huge distinction can help you speed up your code by replacing your loops with NumPy operations.
+
+As we mentioned in the previous examples, improvement in performance is due to a consistent dtype in a NumPy Array. A tip that can help you use NumPy Arrays correctly is to always consider dtype before you apply any operation, as you will most likely be doing in most programming languages. The following example will show you a hugely different result with the same operation, but this is based on a different dtype array:
+
+In [12]: x = np.arange(1,9) 
+In [13]: x.dtype 
+Out[13]: dtype('int32') 
+In [14]: x = x / 10.0 
+In [15]: x 
+Out[15]: array([ 0.1,  0.2,  0.3,  0.4,  0.5,  0.6,  0.7,  0.8]) 
+In [16]: x.dtype 
+Out[16]: dtype('float64') 
+In [17]: y = np.arange(1,9) 
+In [18]: y /= 10.0 
+In [19]: y 
+Out[19]: array([0, 0, 0, 0, 0, 0, 0, 0]) 
+In [20]: y.dtype 
+Out[20]: dtype('int32') 
+
+The two variables x and y are exactly the same: both are numpy.int32 Arrays, ranging from 1 to 8 (you might get numpy.int64 if you use a 64-bit machine) and are divided by float 10.0. However, when x is divided by a float, a new NumPy Array is created with dtype = numpy.float64. This is a totally new array but has the same variable name,x, so dtype is changed in x. On the other hand,y uses the/= sign, which always honors the dtype value of the y array. So, when it is divided by 10.0, no new array is created; only the value in the element of y is changed but dtype is still numpy.int32. This is why x and y end up with two different arrays. Note that, from version of 1.10, NumPy will not allow you to cast the float result as an integer; therefore, TypeError will have to be raised.
+
+Universal functions (ufuncs)
+NumPy has many universal functions (so-called ufuncs), so use them to your advantage to eliminate as many loops as you can to optimize your code. The ufuncs have a pretty good coverage in math, trigonometry, summary statistics, and comparison operations. For detailed ufunc lists, refer to the online documentation at http://docs.scipy.org/doc/numpy/reference/ufuncs.html .
+
+Due to the large amount of ufuncs in NumPy, we can hardy cover all of them in a chapter. In this section, we only aim to understand how and why NumPy ufuncs should be used.
+
+Getting started with basic ufuncs
+Most ufuncs are either unary or binary, which means that they can take only one or two arguments and apply them, element-wise or in mathematics; this is referred to as a vectorized operation or a NumPy arithmetic operation, which we explained in previous sections. Here are some common ufuncs:
+
+In [21]: x = np.arange(5,10) 
+In [22]: np.square(x) 
+Out[22]: array([25, 36, 49, 64, 81]) 
+Math operations are widely supported in ufuncs, some that are as basic as numpy.square() or numpy.log(), and others that are advanced trigonometric operations, such as numpy.arcsin(), numpy.rad2deg(), and more. Here, np.mod()retrieves the remainders of division:
+
+In [23]: y = np.ones(5) * 10 
+In [24]: np.mod(y, x) 
+Out[24]: array([ 0.,  4.,  3.,  2.,  1.]) 
+Some ufuncs have similar names, but their function and behaviors are very different. Check online documentation first to make sure you get the result you expect. Here is an example of numpy.minimum() and numpy.min():
+
+In [25]: np.minimum(x, 7) 
+Out[25]: array([5, 6, 7, 7, 7]) 
+In [26]: np.min(x) 
+Out[26]: 5 
+As you can see, numpy.minimum() compares two arrays and returns the minimum value for both. 1  is the shape of the array value of which is 7, so it's broadcast to[7, 7, 7, 7, 7]. We will talk about the NumPy broadcasting rule in a later section. numpy.min(), only takes one required argument and returns the smallest element in the array.
+
+Working with more advanced ufuncs
+Most ufuncs have an optional argument to provide more flexibility when using them; the following example will use numpy.median(). This is done with an optional axis argument on a two-dimensional array created by the numpy.repeat() function to repeat the x array three times and assign it to the z variable:
+
+In [27]: z = np.repeat(x, 3).reshape(5, 3) 
+In [28]: z 
+Out[28]: 
+array([[5, 5, 5], 
+       [6, 6, 6], 
+       [7, 7, 7], 
+       [8, 8, 8], 
+       [9, 9, 9]]) 
+In [29]: np.median(z) 
+Out[29]: 7.0 
+In [30]: np.median(z, axis = 0) 
+Out[30]: array([ 7.,  7.,  7.]) 
+In [31]: np.median(z, axis = 1) 
+Out[31]: array([ 5.,  6.,  7.,  8.,  9.]) 
+We can see without applying the axis argument that the numpy.median() function flattens the array by default and returns a median element, so only one value is returned. With the axis argument, if it's applied to 0, the operation will be based on the column; therefore, we obtain a new NumPy Array with a length of 3 (there are 3 columns in total in the z variable). While axis = 1, it performed the operation based on rows, so we have a new array with five elements.
+
+ufuncs not only provide optional arguments to tune operations, but many of them also have some built-in methods, which provides even more flexibility. The following example uses accumulate() in numpy.add() to accumulate the result of applying add() to all elements:
+
+In [32]: np.add.accumulate(x) 
+Out[32]: array([ 5, 11, 18, 26, 35]) 
+The second example applies the matrix outer operation on numpy.multiply() to all pairs of elements from two input arrays. In this example, two arrays are from x. The final shape of the outer product from multiply() will be 5 by 5:
+
+In [33]: np.multiply.outer(x, x) 
+Out[33]: 
+array([[25, 30, 35, 40, 45], 
+       [30, 36, 42, 48, 54], 
+       [35, 42, 49, 56, 63], 
+       [40, 48, 56, 64, 72], 
+       [45, 54, 63, 72, 81]]) 
+If you want something a little more advanced, you will want to consider building your own ufuncs, which might require using the Python- C API, or you may also use Numba modules (vectorize decorators) to implement customized ufuncs. In this chapter, our goal is to understand NumPy ufuncs, so we will not cover customized ufuncs. For further details, refer to NumPy's online documentation, called Writing your own ufunc, at  http://docs.scipy.org/doc/numpy/user/c-info.ufunc-tutorial.html , or a Numba document called Creating Numpy Universal Functions at  http://numba.pydata.org/numba-doc/dev/user/vectorize.html .
+
+
+Broadcasting and shape manipulation
+NumPy operations are mostly done element-wise, which requires two arrays in an operation to have the same shape; however, this doesn't mean that NumPy operations can't take two differently shaped arrays (refer to the first example we looked at with scalars). NumPy provides the flexibility to broadcast a smaller-sized array across a larger one. But we can't broadcast the array to just about any shape. It needs to follow certain constrains; we will be covering them in this section. One key idea to keep in mind is that broadcasting involves performing meaningful operations over two differently shaped arrays. However, inappropriate broadcasting might lead to an inefficient use of memory that slows down computation.
+
+Broadcasting rules
+The general rule for broadcasting is to determine whether two arrays are compatible with dimensioning. There are two conditions that need to be met:
+1.Two arrays should be of equal dimensions
+2.One of them is 1
+
+If the preceding conditions are not met, a ValueError exception will be thrown to indicate that the arrays have incompatible shapes. Now, we are going through three examples to take a look at how broadcasting rules work:
+
+In [35]: x = np.array([[ 0, 0, 0], 
+   ....:               [10,10,10], 
+   ....:               [20,20,20]]) 
+In [36]: y = np.array([1, 2, 3]) 
+In [37]: x + y 
+Out[37]: 
+array([[ 1,  2,  3], 
+       [11, 12, 13], 
+       [21, 22, 23]]) 
+
+Let's make the preceding code into a graph to help us understand broadcasting. The x variable has a shape of (3, 3), while y only has a shape of 3. But in NumPy broadcasting, the shape of y is translated to 3 by 1; therefore, the second condition of the rule has been met. y has been broadcast to the same shape of x by repeating it. The+ operation can apply element-wise.
+
+SEE IMAGE np9
+
+
+Broadcasting rules
+Numpy broadcasting on different shapes of arrays, where x(3,3) + y(3)
+Next, we are going to show you the result of broadcasting both arrays:
+
+In [38]: x = np.array([[0], [10], [20]]) 
+In [39]: x 
+Out[39]: 
+array([[ 0], 
+       [10], 
+       [20]]) 
+In [40]: x + y 
+Out[40]: 
+array([[ 1,  2,  3], 
+       [11, 12, 13], 
+       [21, 22, 23]]) 
+The preceding example shows you how both x and y are broadcast. x is broadcast by the column, while y is broadcast by the row since both of them have dimension that are equal to 1 in terms of their shape. The second broadcasting condition has been met, and the new result array is a 3 by 3 array.
+
+SEE IMAGE np3
+
+Let's take a look of our last example, which two arrays can't meet the requirement of broadcasting rules:
+
+In [41]: x = np.array([[ 0, 0, 0], 
+   ....:               [10,10,10], 
+   ....:               [20,20,20]]) 
+In [42]: y = np.arange(1,5) 
+In [43]: x + y 
+ValueError: operands could not be broadcast together with shapes (3,3) (4) 
+In the third example, broadcasting can't be performed due to x and y as they have different shapes in the row dimension and none of them are equal to 1. Thus, none of the broadcasting conditions can be met. NumPy throws ValueError, telling you that the shape is incompatible.
+
+SEE IMAGE np4
+
+Reshaping NumPy Arrays
+After understanding the broadcasting rules, another important concept here is to reshape your NumPy Arrays, especially when you are dealing with multidimensional arrays. It's common for you to create a NumPy Array in just one dimension, reshaping it to a multidimension later, or vice versa. A key idea here is that you can change the shape of your arrays, but the number of elements should not be changed; for example, you can't reshape a 3 by 3 array to a 10 by 1 array. The total number of elements (or a so-called data buffer in the ndarray internal organization) should be consistent before and after reshaping. Or ,you might need to resize, but that's another story. Now, let's look at some shape manipulations:
+
+In [44]: x = np.arange(24) 
+In [45]: x.shape = 2, 3, -1 
+In [46]: x 
+Out[46]: 
+array([[[ 0,  1,  2,  3], 
+        [ 4,  5,  6,  7], 
+        [ 8,  9, 10, 11]], 
+       [[12, 13, 14, 15], 
+        [16, 17, 18, 19], 
+        [20, 21, 22, 23]]]) 
+The basic reshaping technique changes the numpy.shape attribute. In the preceding example, we have an array whose shape is (24,1), and after altering the shape attribute, we obtain an array of the same size but the shape has been changed to 2 by 3 by 4. Note that -1 in a shape means the remaining shape size of the transferred array.
+
+In [47]: x = np.arange(1000000) 
+In [48]: x.shape = 100, 100, 100 
+In [49]: %timeit x.flatten() 
+1000 loops, best of 3: 1.14 ms per loop 
+In [50]: %timeit x.ravel() 
+1000000 loops, best of 3: 330 ns per loop 
+The preceding example is to reshape a 100 by 100 by 100 array back to just one dimension; here, we apply two functions, numpy.flatten() and numpy.ravel(), to collapse the array, and at the same time, we also compare the execution time. We notice that the speed difference between numpy.flatten() and numpy.ravel() is huge, but both of them are much faster than three layers of Python looping. The difference in performance between the two functions is that np.flatten() creates a copy from the original array, while np.ravel() just changes the view (if you don't remember the difference between copies and views, go back a bit to Chapter 2, The NumPy ndarray Object).
+
+This example simply shows you that NumPy offers many functions and some of them can produce same results; pick up the function that satisfies your purpose and, at the same time, provides you with optimized performance.
+
+Vector stacking
+Reshaping changes the shape of one array, but how do we construct a two or multidimensional array by equally-sized row vectors? NumPy provides a solution for this called vector stacking; here, we are going to go through three examples using three different stacking functions to achieve the combination of two arrays based on different dimensions:
+
+In [51]: x = np.arange (0, 10, 2) 
+In [52]: y = np.arange (0, -5, -1) 
+In [53]: np.vstack([x, y]) 
+Out[53]: 
+array([[ 0,  2,  4,  6,  8], 
+          [ 0, -1, -2, -3, -4]]) 
+Numpy.vstack() constructs the new array by vertically stacking two input arrays. The new array is two-dimensional:
+
+In [54]: np.hstack([x, y]) 
+Out[54]: array([ 0,  2,  4,  6,  8,  0, -1, -2, -3, -4]) 
+While numpy.hstack() combines the two arrays horizontally, the new array is still one-dimensional:
+
+In [55]: np.dstack([x, y]) 
+Out[55]: 
+array([[[ 0,  0], 
+        [ 2, -1], 
+        [ 4, -2], 
+        [ 6, -3], 
+        [ 8, -4]]]) 
+numpy.dstack() is a bit different: it stacks the arrays in sequence depth-wise along the third dimension so that the new array is three-dimensional.
+
+In the following code, if you change the array size using numpy.resize(), you are enlarging the array, and it will repeat itself until it reaches the new size; otherwise, it will truncate the array to the new size. A point to note here is that ndarray also has the resize() operation, so you can also use it to change the size of your array by typing x.resize(8) in this example; however, you will notice that the enlarging part is filled with zero, not repeating the array itself. Also, you can't use ndarray.resize() if you have assigned the array to another variable. Numpy.resize() creates a new array with specified shapes, which have fewer limitations than ndarray.resize(), and is a more preferable operation to use to change the size of your NumPy Array if necessary:
+
+In [56]: x = np.arange(3) 
+In [57]: np.resize(x, (8,)) 
+Out[57]: array([0, 1, 2, 0, 1, 2, 0, 1]) 
+
+A boolean mask
+Indexing and slicing are quite handy and powerful in NumPy, but with the booling mask it gets even better! Let's start by creating a boolean array first. Note that there is a special kind of array in NumPy named a masked array. Here, we are not talking about it but we're also going to explain how to extend indexing and slicing with NumPy Arrays:
+
+In [58]: x = np.array([1,3,-1, 5, 7, -1]) 
+In [59]: mask = (x < 0) 
+In [60]: mask 
+Out[60]: array([False, False,  True, False, False,  True], dtype=bool) 
+We can see from the preceding example that by applying the < logic sign that we applied scalars to a NumPy Array and the naming of a new array to mask, it's still vectorized and returns the True/False boolean with the same shape of the variable x indicated which element in x meet the criteria:
+
+In [61]: x [mask] = 0 
+In [62]: x 
+Out[62]: array([1, 3, 0, 5, 7, 0]) 
+Using the mask, we gain the ability to access or replace any element value in our arrays without knowing their index. Needless to say, this can be done without using a for loop.
+
+The following example shows how to sum up the mask array, where True stands for one and False stands for 0. We created 50 random values, ranging from 0 to 1, and 20 of them are larger than 0.5; however, this is quite expected for a random array:
+
+In [69]: x = np.random.random(50) 
+In [70]: (x > .5).sum() 
+Out[70]: 20 
+
+Helper functions
+Besides the help() and dir() functions in Python and other online documentation, NumPy also provides a helper function, numpy.lookfor(), to help you find the right function you need. The argument is a string, and it can be in the form of a function name or anything related to it. Let's try to find out more about operations related to resize, which we took a look at in an earlier section:
+
+In [71]: np.lookfor('resize') 
+Search results for 'resize' 
+--------------------------- 
+numpy.ma.resize 
+    Return a new masked array with the specified size and shape. 
+numpy.chararray.resize 
+    Change shape and size of array in-place. 
+numpy.oldnumeric.ma.resize 
+    The original array's total size can be any size. 
+numpy.resize 
+    Return a new array with the specified shape. 
+
+
+Summary
+In this chapter, we covered the basic operations of NumPy and its ufuncs. We took a look at the huge difference between NumPy operations and Python looping. We also took a look at how broadcasting works and what we should avoid. We tried to understand the concept of masking as well.
+
+The best way to use NumPy Arrays is to eliminate loops as much as you can and use ufuncs in NumPy instead. Keep in mind the broadcasting rules and use them with care. Using slicing and indexing with masking makes your code more efficient. Most importantly, have fun while using it.
+
+In the next few chapters, we will cover the core libs of NumPy, including date/time and a file I/O to help you extend your NumPy experience.
+====================================================================
+Chapter 4. NumPy Core and Libs Submodules
+
+After covering so many NumPy ufuncs in the previous chapter, I hope you still remember the very core of NumPy, which is the ndarray object. We are going to finish the last important attribute of ndarray: strides, which will give you the full picture of memory layout. Also, it's time to show you that NumPy arrays can deal not only with numbers but also with various types of data; we will talk about record arrays and date time arrays. Lastly, we will show how to read/write NumPy arrays from/to files, and start to do some real-world analysis using NumPy.
+
+The topics that will be covered in this chapter are:
+
+The core of NumPy arrays: memory layout
+Structure arrays (record arrays)
+Date-time in NumPy arrays
+File I/O in NumPy arrays
+
+Introducing strides:
+
+Strides are the indexing scheme in NumPy arrays, and indicate the number of bytes to jump to find the next element. We all know the performance improvements of NumPy come from a homogeneous multidimensional array object with fixed-size items, the numpy.ndarray object. We've talked about the shape (dimension) of the ndarray object, the data type, and the order (the C-style row-major indexing arrays and the Fortran style column-major arrays.) Now it's time to take a closer look at strides.
+
+Let's start by creating a NumPy array and changing its shape to see the differences in the strides.
+
+Create a NumPy array and take a look at the strides:
+      In [1]: import numpy as np
+      In [2]: x = np.arange(8, dtype = np.int8)
+      In [3]: x
+      Out[3]: array([0, 1, 2, 3, 4, 5, 6, 7])
+      In [4]: x.strides
+      Out[4]: (1,)
+      In [5]: str(x.data)
+      Out[5]: '\x00\x01\x02\x03\x04\x05\x06\x07'
+A one-dimensional array x is created and its data type is NumPy integer 8, which means each element in the array is an 8-bit integer (1 byte each, and a total of 8 bytes). The strides represent the tuple of bytes to step in each dimension when traversing an array. In the previous example, it's one dimension, so we obtain the tuple as (1, ). Each element is 1 byte apart from its previous element. When we print out x.data, we can get the Python buffer object pointing to the start of the data, which is from x01 to x07 in the example.
+
+Change the shape and see the stride change:
+      In [6]: x.shape = 2, 4 
+      In [7]: x 
+      Out[7]: 
+      array([[0, 1, 2, 3], 
+             [4, 5, 6, 7]], dtype=int8) 
+      In [8]: x.strides 
+      Out[8]: (4, 1) 
+      In [9]: str(x.data) 
+      Out[9]: '\x00\x01\x02\x03\x04\x05\x06\x07' 
+      In [10]: x.shape = 1,4,2 
+      In [11]: x.strides 
+      Out[11]: (8, 2, 1) 
+      In [12]: str(x.data) 
+      Out[12]: '\x00\x01\x02\x03\x04\x05\x06\x07' 
+
+Now we change the dimensions of x to 2 by 4 and check the strides again. We can see it changes to (4, 1), which means the elements in the first dimension are four bytes apart, and the array need to jump four bytes to find the next row, but the elements in the second dimension are still 1 byte apart, jumping one byte to find the next column. Let's print out x.data again, and we can see that the memory layout of the data remains the same, but only the strides change. The same behavior occurs when we change the shape to be three dimensional: 1 by 4 by 2 arrays. (What if our arrays are constructed by the Fortran style order? How will the strides change due to changing the shapes? Try to create a column-major array and do the same exercise to check this out.)
+
+So now we know what a stride is, and its relationship to an ndarray object, but how can the stride improve our NumPy experience? Let's do some stride manipulation to get a better sense of this: two arrays are with same content but have different strides:
+      In [13]: x = np.ones((10000,)) 
+      In [14]: y = np.ones((10000 * 100, ))[::100] 
+      In [15]: x.shape, y.shape 
+      Out[15]: ((10000,), (10000,)) 
+      In [16]: x == y 
+      Out[16]: array([ True,  True,  True, ...,  True,  True,
+      True], dtype=bool) 
+We create two NumPy Arrays, x and y, and do a comparison; we can see that the two arrays are equal. They have the same shape and all the elements are one, but actually the two arrays are different in terms of memory layout. Let's simply use the flags attribute you learned about in Chapter 2, The NumPy ndarray Object to check the two arrays' memory layout.
+      In [17]: x.flags 
+      Out[17]: C_CONTIGUOUS : True 
+               F_CONTIGUOUS : True 
+               OWNDATA : True 
+               WRITEABLE : True 
+               ALIGNED : True 
+               UPDATEIFCOPY : False 
+ 
+      In [18]: y.flags 
+      Out[18]: C_CONTIGUOUS : False 
+               F_CONTIGUOUS : False 
+               OWNDATA : False 
+               WRITEABLE : True 
+               ALIGNED : True 
+               UPDATEIFCOPY : False 
+We can see that the x array is continuous in both the C and Fortran order while y is not. Let's check the strides for the difference:
+      In [19]: x.strides, y.strides 
+      Out[19]: ((8,), (800,)) 
+Array x is created continuously, so in the same dimension each element is eight bytes apart (the default dtype of numpy.ones is a 64-bit float); however, y is created from a subset of 10000 * 100 for every 100 elements, so the index schema in the memory layout is not continuous.
+
+Even though x and y have the same shape, each element in y is 800 bytes apart from each other. When you use NumPy arrays x and y, you might not notice the difference in indexing, but the memory layout does affect the performance. Let's use the %timeit function in IPython to check this out:
+      In [18]: %timeit x.sum() 
+      100000 loops, best of 3: 13.8 µs per loop 
+      In [19]: %timeit y.sum() 
+      10000 loops, best of 3: 25.9 µs per loop 
+Typically with a fixed cache size, when the stride size gets larger, the hit rate (the fraction of memory accessed that finds data in the cache) will be lower, comparatively, while the miss rate (the fraction of memory accessed that has to go to the memory) will be higher. The cache hit time and miss time compose the average data access time. Let's try to look at our example again from the cache perspective. Array x with smaller strides is faster than the larger strides of y. The reason for the difference in performance is that the CPU is pulling data from the main memory to its cache in blocks, and the smaller stride means fewer transfers are needed. See the following graph for details, where the red line represents the size of the CPU cache, and blue boxes represent the memory layout containing the data.
+
+It's obvious that if x and y are both required, 100 blue boxes of data, the required cache time for x will be less.
+
+See IMAGE np5
+
+Structured arrays
+Structured arrays or record arrays are useful when you perform computations, and at the same time you could keep closely related data together. For example, when you process incident data and each incident contains geographic coordinates and the occurrence time, while you calculate the final result, you can easily find the associated geographic locations and timepoint for further visualization. NumPy also provides powerful capabilities to create arrays of records, as multiple data types live in one NumPy array. However, one principle in NumPy that still needs to be honored is that the data type in each field (you can think of this as a column in the records) needs to be homogeneous. Here are some simple examples that show you how it works:
+
+In [20]: x = np.empty((2,), dtype = ('i4,f4,a10')) 
+In [21]: x[:] = [(1,0.5, 'NumPy'), (10,-0.5, 'Essential')] 
+In [22]: x 
+Out[22]: 
+array([(1, 0.5, 'NumPy'), (10, -0.5, 'Essential')], 
+      dtype=[('f0', '<i4'), ('f1', '<f4'), ('f2', 'S10')]) 
+In the previous example, we created a one-dimensional record array using numpy.empty() and specified the data types for the elements-the first element is i4 (a 32-bit integer, where i stands for a signed integer, and 4 means 4 bytes, like np.int32), the second element is a 32-bit float (f stands for float and also 4 bytes), and the third element is a string of length less than or equal to 10. We assign the values to the defined array following the data type orders we specified.
+
+You can see the print-out of x, which now contains three different types of records, and we also get a default field name in dtype:f0, f1, and f2. Of course, you may specify your field names, as we'll show you in the following examples.
+
+One thing to note here is that we used the print-out data type-there is a < in front of i4 and f4, and < stands for byteorder big-endian (indicating the memory address increase order):
+
+In [23]: x[0] 
+Out[23]: (1, 0.5, 'NumPy') 
+In [24]: x['f2'] 
+Out[24]: 
+array(['NumPy', 'Essential'], dtype='|S10') 
+The way we retrieve data remains the same, we use the index to obtain the record, but moreover, we can use the field name to obtain the value of certain fields, so in the previous example, we used f2 to obtain the string field. In the following example, we are going to create a view of x, named y, and see how it interacts with the original record array:
+
+In [25]: y = x['f0'] 
+In [26]: y 
+Out[26]: array([ 1, 10]) 
+In [27]: y[:] = y * 10 
+In [28]: y 
+Out[28]: array([ 10, 100]) 
+In [29]: y[:] = y + 0.5 
+In [30]: y 
+Out[30]: array([ 10, 100]) 
+In [31]: x 
+Out[31]: 
+array([(10, 0.5, 'NumPy'), (100, -0.5, 'Essential')], 
+      dtype=[('f0', '<i4'), ('f1', '<f4'), ('f2', 'S10')]) 
+Here, y is the view of field f0 in x. In the record arrays, the characteristics of NumPy arrays still remain. When you multiply the scalar 10, it still applies to whole array of y (the broadcasting rule), and it always honors the data type. You can see after the multiplication, we add 0.5 to y, but since the data type of field f0 is a 32-bit integer, the result is still [10, 100]. Also, y is a view of f0 in x, so they share the same memory block. When we print out x after the calculation in y, we can find that the values in x have also changed.
+
+Before we go further into the record arrays, let's sort out how to define a record array. The easiest way is as shown in the previous example, where we initialize a NumPy array and use the string argument to specify the data type of fields.
+
+There are many forms of string argument NumPy can accept (see http://docs.scipy.org/doc/numpy/user/basics.rec.html for details); the most preferred can be chosen from one of these:
+
+SEE IMAGE np6
+
+You may also prefix the string arguments with a repeated number or a shape to define the dimension of the field, but it's still considered as just one field in the record arrays. Let's try using the shape as prefix to the string arguments in the following example:
+
+In [32]: z = np.ones((2,), dtype = ('3i4, (2,3)f4')) 
+In [32]: z 
+Out[32]: 
+array([([1, 1, 1], [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]), 
+       ([1, 1, 1], [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]])], 
+      dtype=[('f0', '<i4', (3,)), ('f1', '<f4', (2, 3))]) 
+In the previous example, field f0 is a one-dimensional array with size 3 and f1 is a two-dimensional array with shape (2, 3). Now, we are clear about the structure of a record array and how to define it. You might be wondering whether the default field name can be changed to something meaningful in your analysis? Of course it can! This is how:
+
+In [33]: x.dtype.names 
+Out[33]: ('f0', 'f1', 'f2') 
+In [34]: x.dtype.names = ('id', 'value', 'note') 
+In [35]: x 
+Out[35]: 
+array([(10, 0.5, 'NumPy'), (100, -0.5, 'Essential')], 
+      dtype=[('id', '<i4'), ('value', '<f4'), ('note', 'S10')]) 
+By assigning the new field names back to the names attribute in the dtype object, we can have our customized field names. Or you can do this when you initialize the record arrays by using a list with a tuple, or a dictionary. In the following examples, we are going to create two identical record arrays with customized field names using a list, and a dictionary:
+
+In [36]: list_ex = np.zeros((2,), dtype = [('id', 'i4'), ('value', 'f4', (2,))]) 
+In [37]: list_ex 
+Out[37]: 
+array([(0, [0.0, 0.0]), (0, [0.0, 0.0])], 
+      dtype=[('id', '<i4'), ('value', '<f4', (2,))]) 
+In [38]: dict_ex = np.zeros((2,), dtype = {'names':['id', 'value'], 'formats':['i4', '2f4']}) 
+In [39]: dict_ex 
+Out[39]: 
+array([(0, [0.0, 0.0]), (0, [0.0, 0.0])], 
+      dtype=[('id', '<i4'), ('value', '<f4', (2,))]) 
+In the list example, we make a tuple of (field name, data type, and shape) for each field. The shape argument is optional; you may also specify the shape with the data type argument. While using a dictionary to define the field, there are two required keys (names and formats) and each key has an equally sized list of values.
+
+Before we go on to the next section, we are going to show you how to access multiple fields in your record array all at once. The following example still uses the array x that we created at beginning with a customized field: id, value, and note:
+
+In [40]: x[['id', 'note']] 
+Out[40]: 
+array([(10, 'NumPy'), (100, 'Essential')], 
+      dtype=[('id', '<i4'), ('note', 'S10')]) 
+You may find this example too simple; if so, you can try to create a new record array from a real-life example containing the country name, population, and rank using the data from Wikipedia: https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population . This will be more fun!
+
+Dates and time in NumPy
+Dates and times are important when you are doing time series analytics, from something as simple as accumulating daily visitors in a museum to something as complicated as trending regression for a crime forecast. Starting from NumPy 1.7, the NumPy core supports date time types (though it's still experimental, and might be subject to change). In order to differentiate from the datetime object in Python, the data type is called datetime64.
+
+This section will cover numpy.datetime64 creation, time delta arithmetic, and the conversion between units and the Python datetime. Let's create a numpy.datetime64 object by using an ISO string:
+
+In [41]: x = np.datetime64('2015-04-01') 
+In [42]: y = np.datetime64('2015-04') 
+In [43]: x.dtype, y.dtype 
+Out[43]: (dtype('<M8[D]'), dtype('<M8[M]')) 
+x and y are both numpy.datetime64 objects and are constructed from an ISO 8601 string (the universal date format-for details see https://en.wikipedia.org/wiki/ISO_8601). But the input string for x contains a days unit while the string for y does not. While creating the NumPy datetime64, it will automatically select from the form of the input string, so when we print out the dtype for both x and y, we can see that x with unit D stands for days while y with unit M stands for months. The< is also the byteorder, here it is the big-endian, and M8 is the short notation of datetime64 (implemented from np.int64). The default date units supported by numpy.datetime64 are years (Y), months (M), weeks (W), and days (D), while the time units are hours (h), minutes (m), seconds (s), and milliseconds (ms).
+
+Of course we can specify the units when we create the array and also use the numpy.arange() method to create the sequence of the array. See the following examples:
+
+In [44]: y = np.datetime64('2015-04', 'D') 
+In [45]: y, y.dtype 
+Out[45]: (numpy.datetime64('2015-04-01'), dtype('<M8[D]')) 
+In [46]: x = np.arange('2015-01', '2015-04', dtype = 'datetime64[M]') 
+In [47]: x 
+Out[47]: array(['2015-01', '2015-02', '2015-03'], dtype='datetime64[M]') 
+However, it's not allowed to specify a time unit when the ISO string only contains date units. A TypeError will be triggered, since conversion between date units and time units requires a choice of time zone and the particular time of day on a given date:
+
+In [48]: y = np.datetime64('2015-04-01', 's') 
+TypeError: Cannot parse "2015-04-01" as unit 's' using casting rule 'same_kind' 
+Next, we are going to do a subtraction of two numpy.datetime64 arrays, and you will see that the broadcasting rules are still valid as long as the date/time units between two arrays are convertible. We use the same array x created earlier and create a new y for the following example:
+
+In [49]: x 
+Out[49]: array(['2015-01', '2015-02', '2015-03'], dtype='datetime64[M]') 
+In [50]: y = np.datetime64('2015-01-01') 
+In [51]: x - y 
+Out[51]: array([ 0, 31, 59], dtype='timedelta64[D]') 
+Interestingly enough, the result array of x subtracting y is [0, 31, 59], not the date anymore, and the dtype has changed to timedelta64[D]. Because NumPy doesn't have a physical quantities system in its core, the timedelta64 data type was created to complement datetime64. In the previous example,[0, 31, 59] is the units from 2015-01-01 in each element in x, and the units are days (D). You may also do the arithmetic between datetime64 and timedelta64, as shown in the following examples:
+
+In [52]: np.datetime64('2015') + np.timedelta64(12, 'M') 
+Out[52]: numpy.datetime64('2016-01') 
+In [53]: np.timedelta64(1, 'W') / np.timedelta64(1, 'D') 
+Out[53]: 7.0 
+In the last part of this section, we are going to talk about the conversion between numpy.datetime64 and Python the datetime. Although the datetime64 object inherits many traits from a NumPy array, there are still some benefits from using the Python datetime object (such as the date and year attributes, isoformat, and more) or vice versa. For example, you may have a list of datetime objects, and you may want to convert them to numpy.datetime64 for the arithmetic or other NumPy ufuncs. In the following example, we are going to convert the existing datetime64 array x to a list of Python datetime in two ways:
+
+In [54]: x 
+Out[54]: array(['2015-01', '2015-02', '2015-03'], dtype='datetime64[M]') 
+In [55]: x.tolist() 
+Out[55]: 
+[datetime.date(2015, 1, 1), 
+ datetime.date(2015, 2, 1), 
+ datetime.date(2015, 3, 1)] 
+In [56]: [element.item() for element in x] 
+Out[56]: 
+[datetime.date(2015, 1, 1), 
+ datetime.date(2015, 2, 1), 
+ datetime.date(2015, 3, 1)] 
+We can see that numpy.datetime64.tolist() and numpy.datetime64.item() with the for loop can achieve the same goal, that is, converting the array to a list of Python datetime objects. But needless to say, we all know which is the more preferred method to do the conversion (if you don't know the answer, have a quick look at Chapter 3, Using NumPy Arrays.) On the other hand, if you already have a list of Python datetime and want to convert it to NumPy datetime64 arrays, simply use the numpy.array() function.
+
+File I/O and NumPy
+Now we have the ability to perform NumPy array computation and manipulation and we know how to construct a record array, it's time for us to do some real-world analysis by reading files into a NumPy array and outputing the result array to a file for further analysis.
+
+We should talk about reading the file first and then exporting the file. But now, we are going to reverse the process, and create a record array first and then output the array to a CSV file. We read the exported CSV file into the NumPy record arrays and compared it with our original record array. The sample array we're going to create will contain an id field with consecutive integers, a value field containing random floats, and a date field with numpy.datetime64['D']. This exercise will use all the knowledge you gained from the previous sections and chapters. Let's start creating the record array:
+
+In [57]: id = np.arange(1000) 
+In [58]: value = np.random.random(1000) 
+In [59]: day = np.random.random_integers(0, 365, 1000) * np.timedelta64(1,'D') 
+In [60]: date = np.datetime64('2014-01-01') + day 
+In [61]: rec_array = np.core.records.fromarrays([id, value, date], names='id, value, date', formats='i4, f4, a10') 
+In [62]: rec_array[:5] 
+Out[62]: 
+rec.array([(0, 0.07019801437854767, '2014-07-10'), 
+       (1, 0.4863224923610687, '2014-12-03'), 
+       (2, 0.9525277614593506, '2014-03-11'), 
+       (3, 0.39706873893737793, '2014-01-02'), 
+       (4, 0.8536589741706848, '2014-09-14')], 
+      dtype=[('id', '<i4'), ('value', '<f4'), ('date', 'S10')]) 
+We first create three NumPy arrays representing the fields we need: id, value, and date. When creating the date field, we combine the numpy.datetime64 with a random NumPy array with size 1000 to simulate random dates in the range from 2014-01-01 to 2014-12-31 (365 days).
+
+Then we use the numpy.core.records.fromarrays() function to merge the three arrays into one record array and assign the names (field name) and the formats (data type). One thing to notice here is that the record array doesn't support the numpy.datetime64 object, so we stored it in the array as a date/time string with a length of 10.
+
+If you are using Python 3, you will find a prefix b added to the front of the date/time string in the record array such as b'2014-09-25'. b here stands for "bytes literals" meaning it only contains ASCII characters (all string types in Python 3 are Unicode ,which is one major change between Python 2 and 3). Therefore in Python 3, converting an object (datetime64) to a string will add the prefix to differentiate between the normal string type. However, it doesn't affect what we are going to do next-exporting the record array to a CSV file:
+
+In [63]: np.savetxt('./record.csv', rec_array, fmt='%i,%.4f,%s') 
+We use the numpy.savetxt() function to handle the exporting, and we specify the first argument as the exported file location, the array name, and the format using the fmt argument. We have three fields with three different data types and we want to add , in between each field in the CSV file. If you prefer any other delimiters, replace the comma in the fmt argument. We also get rid of redundant digits in the value field, so we specify only four digits after the decimal points to the file by using %.4f. Now you may go to the file location we specified in the first argument to check the CSV file. Open it in a spreadsheet software program and you can see the following:
+
+
+SEE IMAGE np7
+
+Next, we are going to read the CSV file to a record array and use the value field to generate a mask field, named mask, which represents a value larger than or equal to 0.75. Then we will append the new mask field to the record array. Let's read the CSV file first:
+
+In [64]: read_array = np.genfromtxt('./record.csv', dtype='i4,f4,a10', delimiter=',', skip_header=0) 
+In [65]: read_array[:5] 
+Out[65]: 
+array([(0, 0.07020000368356705, '2014-07-10'), 
+       (1, 0.486299991607666, '2014-12-03'), 
+       (2, 0.9524999856948853, '2014-03-11'), 
+       (3, 0.3971000015735626, '2014-01-02'), 
+       (4, 0.8536999821662903, '2014-09-14')], 
+      dtype=[('f0', '<i4'), ('f1', '<f4'), ('f2', 'S10')]) 
+We use numpy.genfromtxt() to read the file into NumPy record array. The first argument is still the file location we want to access, and the dtype argument is optional. If we didn't specify this, NumPy will determine the dtype argument using the contents of each column individually. Since we clearly know about the data, it's recommended to specify every time when you read the file.
+
+The delimiter argument is also optional, and by default, any consecutive whitespaces act as delimiters. However, we used ","for the CSV file. The last optional argument we use in the method is the skip_header. Although we didn't have the field name on top of the records in the file, NumPy provides the functionality to skip a number of lines at the beginning of the file.
+
+Other than skip_header, the numpy.genfromtext() function supports 22 more operation parameters to fine-tune the array, such as defining missing and filling values. For more details, please refer to  http://docs.scipy.org/doc/numpy-1.10.0/reference/generated/numpy.genfromtxt.html .
+
+Now the data is read in to the record array, you will find that the second field is more than four digits after the decimal points as we specified in exporting the CSV. The reason for this is because we use f4 as its data type when read in. The empty digits will be filled by NumPy, but the valid four digits remain the same as in the file. You may also notice we lost the field name, so let's specify it:
+
+In [66]: read_array.dtype.names = ('id', 'value', 'date') 
+The last part of this exercise is to create a mask variable with values based on the value field larger than or equal to 0.75. We append the new mask array to the read_array as a new column:
+
+In [68]: mask = read_array['value'] >= 0.75 
+In [69]: from numpy.lib.recfunctions import append_fields 
+In [70]: read_array = append_fields(read_array, 'mask', data=mask, dtypes='i1') 
+In [71]: read_array[:5] 
+Out[71]: 
+masked_array(data = [(0, 0.07020000368356705, '2014-07-10', 0) 
+ (1, 0.486299991607666, '2014-12-03', 0)
+ 
+ (2, 0.9524999856948853, '2014-03-11', 1) 
+ (3, 0.3971000015735626, '2014-01-02', 0) 
+dtype = [('id', '<i4'), ('value', '<f4'), ('date', 'S10'), ('mask','i1')]) 
+numpy.lib.recfunctions can only be accessed when you import it directly, and the append_field() function is in the module. Appending a record array is as simple as appending a NumPy array: the first argument is the base array; the second argument is the new field name mask, and the data associated with it; and the last argument is the data type. Because a mask is a Boolean array, NumPy will apply the mask automatically to the record array, but we can still see a new field added to the read_array and the value of the mask reflects the value threshold (>= 0.75) in the value field. This is just the beginning of showing you how to hook up NumPy array with your data file. Now it's time to do some real analysis with your data!
+
+CopyAdd Highlight Add Note
+
+
+Summary
+In this chapter, we covered the last important component of the ndarray object: strides. We saw a huge difference in memory layouts and also in performance when you use different ways to initialize your NumPy array. We also got to know the record array (structured array) and how to manipulate the date/time in NumPy. Most importantly, we saw how to read and write our data with NumPy.
+
+NumPy is powerful not only because of its performance or ufuncs, but also because of how easy it can make your analysis. Use NumPy with your data as much as you can!
+
+Next, we will look at linear algebra and matrix computation using NumPy.
+
+
+
+Chapter 5. Linear Algebra in NumPy
+NumPy is designed for numeric computations; underneath the hood it is still the powerful ndarray object, but at the same time NumPy provides different types of objects to solve mathematical problems. In this chapter, we will cover the matrix object and polynomial object to help you solve problems using a non-ndarray way. Again, NumPy provides a lot of standard mathematical algorithms and supports multi-dimensional data. While a matrix can't perform three-dimensional data, using the ndarray objects with the NumPy functions of linear algebra and polynomials is more preferable (the extensive SciPy library is another good choice for linear algebra, but NumPy is our focus in this book). Let's use NumPy to do some math now!
+
+The topics that will be covered in this chapter are:
+
+Matrix and vector operations
+Decompositions
+Mathematics of polynomials
+Regression and curve fitting
+The matrix class
+For linear algebra, using matrices might be more straightforward. The matrix object in NumPy inherits all the attributes and methods from ndarray, but it's strictly two-dimensional, while ndarray can be multi-dimensional. The well-known advantage of using NumPy matrices is that they provide matrix multiplication as the * notation; for example, if x and y are matrices, x * y is their matrix product. However, starting from Python 3.5/NumPy 1.10, native matrix multiplication is supported with the new operator "
+
+However, starting from Python 3.5/NumPy 1.10, native matrix multiplication is supported with the new operator "@". So that is one more good reason to use ndarray ( https://docs.python.org/3/whatsnew/3.5.html#whatsnew-pep-465 ).
+
+However, matrix objects still provide convenient conversion such as inverse and conjugate transpose while an ndarraydoes not. Let's start by creating NumPy matrices:
+
+In [1]: import numpy as np 
+In [2]: ndArray = np.arange(9).reshape(3,3) 
+In [3]: x = np.matrix(ndArray) 
+In [4]: y = np.mat(np.identity(3)) 
+In [5]: x 
+Out[5]: 
+matrix([[0, 1, 2], 
+        [3, 4, 5], 
+        [6, 7, 8]]) 
+In [6]: y 
+Out[6]: 
+matrix([[1., 0., 0.], 
+        [0., 1., 0.], 
+        [0., 0., 1.]]) 
+There are a couple of ways to create or convert to a NumPy matrix object, and the more preferred way is to use numpy.mat() or numpy.matrix(). Both methods create matrices, but numpy.matrix() creates a copy while numpy.mat() changes the view only; it's equivalent to numpy.matrix(data, copy = False). In the previous example, we create two matrices, both of which are from the ndarray object (the np.identity(3) returns a 3 x 3 identity array). Of course you can use a string or list to create a matrix, for example: np.matrix('0 1 2; 3 4 5; 6 7 8'), and np.matrix([[0,1,2],[3,4,5],[6,7,8]]) will create the same matrix as x. In the following example, we are going to do some basic matrix operations:
+
+In [7]: x + y 
+Out[7]: 
+matrix([[ 1.,  1.,  2.], 
+        [ 3.,  5.,  5.], 
+        [ 6.,  7.,  9.]]) 
+In [8]: x * x 
+Out[8]: 
+matrix([[ 15,  18,  21], 
+        [ 42,  54,  66], 
+        [ 69,  90, 111]]) 
+In [9]: np.dot(ndArray, ndArray) 
+Out[9]: 
+array([[ 15,  18,  21], 
+       [ 42,  54,  66], 
+       [ 69,  90, 111]]) 
+In [10]: x**3 
+Out[10]: 
+matrix([[ 180,  234,  288], 
+        [ 558,  720,  882], 
+        [ 936, 1206, 1476]])
+In [11]: z = np.matrix(np.random.random_integers(1, 50, 9).reshape(3,3)) 
+In [12]: z 
+Out[12]: 
+matrix([[32, 21, 28], 
+        [ 2, 24, 22], 
+        [32, 20, 22]]) 
+In [13]: z.I 
+Out[13]: 
+matrix( [[-0.0237 -0.0264  0.0566] 
+         [-0.178   0.0518  0.1748] 
+         [ 0.1963 -0.0086 -0.1958]]) 
+ 
+In [14]: z.H 
+Out[14]: 
+matrix([[32  2 32] 
+        [21 24 20] 
+        [28 22 22]]) 
+You can see from the previous example that, when we use the * notation, it applies the matrix multiplication as you use numpy.dot() for ndarray (we will talk about this in the next section). Also, the ** power notation is done in a matrix way. We also created a matrix z from random functions to show when the matrix is invertible (not singular). You can obtain the inverse matrix using numpy.matrix.I. We can also do a conjugate (Hermitian) transpose using numpy.matrix.H.
+
+Now we know how to create a matrix object and do some basic operations, it's time for some practice. Let's try to solve a simple linear equation. Suppose we have a linear equation as A x = b and we want to know the value of x. A possible solution will be as follows:
+
+A-1A x = A-1 b 
+I x = A-1 b 
+x = A-1 b 
+We obtain x by multiplying the inverse of A and b, so let's do this with numpy.matrix:
+
+In [15]: A = np.mat('3 1 4; 1 5 9; 2 6 5') 
+In [16]: b = np.mat([[1],[2],[3]]) 
+In [17]: x = A.I * b 
+In [18]: x 
+Out[18]: 
+matrix([[ 0.2667], 
+        [ 0.4667], 
+        [-0.0667]]) 
+In [21]: np.allclose(A * x, b) 
+Out[21]: True 
+We obtained x, and we used numpy.allclose() to compare the LHS and the RHS within a tolerance. The default absolute tolerance is 1e-8. The result returns True, meaning that LHS and RHS are equal within the tolerance, which verifies our solution. Though numpy.matrix() takes an ordinary matrix form, in most cases ndarray would be good enough for you to do linear algebra. Now we will simply compare the performance between ndarray and matrix:
+
+In [20]: x = np.arange(25000000).reshape(5000,5000) 
+ 
+In [21]: y = np.mat(x) 
+ 
+In [22]: %timeit x.T 
+10000000 loops, best of 3: 176 ns per loop 
+ 
+In [23]: %timeit y.T 
+1000000 loops, best of 3: 1.36 µs per loop 
+This example shows a huge performance difference between ndarray and matrix when doing a transpose. Both x and y have 5,000 by 5,000 elements, but x is a two-dimensional ndarray, while y converted it to the same shape matrix. The NumPy matrix will always do operations in the matrix way, even if the computation has been optimized by NumPy.
+
+While ndarray here by default reverses the dimensions instead of permuting the axes (the matrix always permutes the axes), that's a huge performance improvement trick done in ndarray. Therefore, ndarray is preferred when doing linear algebra especially for large sets of data considering its performance. Use matrix only when necessary. Before we go on to the next section, let's go through two more matrix object properties that convert a matrix to a basic ndarray:
+
+In [24]: A.A 
+Out[24]: 
+array([[3, 1, 4], 
+       [1, 5, 9], 
+       [2, 6, 5]]) 
+In [25]: A.A1 
+Out[25]: array([3, 1, 4, 1, 5, 9, 2, 6, 5]) 
+The previous examples use the matrix A we created in the linear equation practice. numpy.matrix.A returns the basic ndarray and numpy.matrix.A1 returns a one-dimensional ndarray.
+
+
+Linear algebra in NumPy
+Before we get into linear algebra class in NumPy, there are five vector products we will cover at the beginning of this section. Let's review them one by one, starting with the numpy.dot() product:
+
+In [26]: x = np.array([[1, 2], [3, 4]]) 
+In [27]: y = np.array([[10, 20], [30, 40]]) 
+In [28]: np.dot(x, y) 
+Out[28]: 
+array([[ 70, 100], 
+       [150, 220]]) 
+The numpy.dot() function performs matrix multiplication, and the detailed calculation is shown here:
+
+SEE IMAGE np8,np9
+
+
+See pdfs
 
 
 
@@ -63,7 +1045,45 @@ by using describe() like this and observing the values of the features in betwee
 
 
 
+Chapter 7. Building and Distributing NumPy Code
+In a real-world scenario, you will be writing an application with the intentions of distributing it to the World or reusing it on various other computers. For this purpose, you would like your application to be packed in a standard way so that everyone in the community understands and follows. As you will have noticed by now, Python users mainly use a package manager called pip to automate the installation of modules created by other programmers. Python has a packaging platform called PyPI (Python Package Index), which is an official central repository for more than 50,000 Python packages. Once the package is registered in PyPi aka Cheese Shop, other users across the world can install it after configuring it with package management systems such as pip. Python comes with a number of solutions to help you to build your code ready for distribution to the Cheese Shop and, in this chapter, we will focus on two such tools, setuptools and Distutils. Apart from these two tools, we will be looking into a specific module provided by NumPy called numpy.distutils. This module makes the process of building and distributing NumPy-specific code easier for the programmers. This module also provides added functionalities such as methods for compiling Fortran code, calling f2py, and more. In this chapter, we will be going through the following steps to learn the packaging workflow:
 
+We will build a small but working setup
+We will explain the steps to integrate NumPy modules into your setup
+We will explain how to register and distribute your application over the Internet
+Introducing Distutils and setuptools
+Before we begin, first let us understand what these tools are and why we prefer one over another. Distutils is a framework that comes by default with Python, and setuptools builds over the standard Distutils to provide enhanced functionalities and features. In a real-world scenario, you will never use Distutils. The only case where you might want to use Distutils alone is where setuptools is unavailable. (A good setup script should check for the availability of setuptools before proceeding.) In most cases, users will be better off installing setuptools as most packages nowadays are built over them. We will be using setuptools for building Cython code in the following chapters; hence, for our purpose, we will be installing setuptools now and using it extensively from now on.
+
+Next let us start by installing the required tools to build our first dummy (but working) installer. After we have got our installer working, we will dive into more functionalities covering NumPy in a real-world script for the pandas module. We will study the checks made in the scripts to make it more robust and how we provide more information in the event of failures.
+
+
+Preparing the tools
+To install setuptools on your system, you need to first download ez_setup.py on your system from https://pypi.python.org/pypi/setuptools and then execute this from your command prompt as follows:
+
+    $ python ez_setup.py
+To test the installation of setuptools, open the Python shell and type the following:
+
+> import setuptools 
+If the preceding import does not give any error, then we have successfully installed setuptools.
+
+
+Array indexing and slicing
+NumPy provides powerful indexing capabilities for arrays. Indexing capabilities in NumPy became so popular that many of them were added back to Python.
+
+Indexing NumPy arrays, in many ways, is very similar to indexing lists or tuples. There are some differences, which will become apparent as we proceed. To start with, let's create an array that has 100 x 100 dimensions:
+
+In [9]: x = np.random.random((100, 100)) 
+Simple integer indexing works by typing indices within a pair of square brackets and placing this next to the array variable. This is a widely used Python construct. Any object that has a __getitem__ method will respond to such indexing. Thus, to access the element in the 42nd row and 87th column, just type this:
+
+In [10]: y = x[42, 87] 
+Like lists and other Python sequences, the use of a colon to index a range of values is also supported. The following statement will print the k th row of the x matrix.
+
+In [11]: print(x[k, :]) 
+The colon can be thought of as an all elements character. So, the preceding statement actually means Print all the characters for the k th row. Similarly, a column can be accessed with x[:,k]. Reversing an array is also similar to reversing a list, such as x[::-1].
+
+The indexed portion of an array is also called a slice of an array, which creates a copy of a port or the whole array (we will cover copies and views in a later section). In the context of an array, the words "slicing" and "indexing" can generally be used interchangeably.
+
+A very concise overview of different slicing and indexing techniques is shown in the following image:
 
 
 
