@@ -579,7 +579,16 @@ eq 3.0 is called discounted reward
 
 if we observe 2.0, we can makeout that as t increases gamma value goes on decreasing(since gamma is a fraction less than 1) so the reward at each consecutive step decreases.
 
-It is like covering infinite distance within finite time, that what eq 2.0 means
+It is like covering infinite distance within finite time, that what eq 2.0 means.ie a infinite sum results in a finite value
+
+Why should we discount the rewards?
+As we saw from the definition of utility of sequences
+
+U(S0,S1,S2....) = SUM(from t=0 to infinity){R(St)}
+
+ie we are taking the sum of rewards of all the states through which the agent moves in future.but since we are adding infinite number of rewards the sum == infinity.
+
+to make the sum finite we discount it with gamma**t.
 
 
 Policies:
@@ -590,11 +599,17 @@ Pi* = argmax(Pi){E(R|Pi)}....4.0
 
  where R = SUM(from t=0 to infinity){gamma**t R(St)}, ie discounted reward
 
+what does equation 4.0 states?
+It defines the optimal policy which is nothing but choosing a policy Pi which maximises the longterm expected reward
+
 U{Pi}(S) is U with policy Pi and State S
 
 U{Pi}(S) = E[R|Pi,S0 = S]...5.0
 
 eq 5.0 represents Utility function for a state when you choosen Pi as a Policy. In other words it's indicating the long term rewards that you'll get if you have used the Policy Pi and start at state S0.
+
+or U{Pi}(S) is the utility of the state if the agent starts at S0 = S
+and follow the policy Pi.
 
 For example you've choosen a path(Policy) and the start state for your game and you'll play the game,then what would be the reward that you'll be getting at the end of the game is given by eq 5.0 
 
@@ -622,15 +637,243 @@ Start with some arbitrary utilities
 Update utilities based on neighbors(ie any state that you can reach)
 repeat until convergence
 
-^U(S)(t+1) = R(S)  + Gamma Max(a){SUM(T(s,a,s')* ^Ut(s'))}
+^U(S)(t+1) = R(S)  + Gamma Max(a){SUM(T(s,a,s')* ^Ut(s'))}...6.2
 
 
 So I'll update ^U(S)(t+1), which is the utility of current state 
 
 ^Ut(s') is the Utility of all other remaining states.
 
+the equation 6.2 is called value iteration because it starts with random utilities for each state and then it iterates till it converges to true value.Once we have found the true utility then the problem is solved because the optimal policy is defined using true utility values
 
-==========================================================================
+Pi*(s) = argmax(a){SUM(s'){T(s,a,s')*U(s')}} 
+
+We don't care about the optimal or true utility unless we are able to get Pi* start with existing values of utility function,ie even when we improve the utility function from its current state there if there wouldn't be any change in (optimal)actions for each state, then we need not further optimise our utility function.
+
+Given a utility function we can find the optimal Pi but given a Pi* finding  a unique optimal utility function is not possible since there can be more than one optimal utility functions for the same Pi*
+
+Policy iteration:
+
+method:
+1.start with any guess of policy
+2.evaluate Pi_t calculate Ut = U_Pi_t
+3.improve Pi_t+1 = argmax(a){SUM{T(s,a,s')*U_t(s')}}
+
+U_t(s) = R(s) + gamma * SUM(s'){T(s,Pi_t(s),s')Ut(s')}
+
+SEE IMAGE FP1
+
+Consider the 2 kinds of Reinforcement learning API:
+
+1. Planning:here we provide transitions and rewards as input to the planner which consists of some code, which tries to create a optimal policy from given inputs.This type of policy creation is called Planning
+
+Model ------> PLANNER ---------> Policy
+(T,R)				  (Pi)
+
+2. Reinforcement learning: here we pass state(s),action(a),reward(r),next state(s') as inputs from which the code in LEARNER learns the optimal policy.
+
+transitions-----> LEARNER-------> Policy
+(s,a,r,s')			   (Pi)
+
+
+there are two other subprocess of above mentioned APIs
+1.MODELER: given transitions it gives out the model
+
+Transitions -----> MODELER -------> Model
+
+2.Simulator: it is like a inverse of a Modeler,it takes model and provides the transitions 
+
+Model ------> SIMULATOR ------> transition
+
+See IMAGE FP2 where 
+the planner in 2 consists of value or policy iterations
+
+
+
+See IMAGE FP3 where
+
+There are 3 approaches for RL:
+
+1. Policy based RL: they try to find policy,the problem with this approach is that we cannot get the actions to be performed in a given state.
+
+2. Value function based RL: value function maps from states to values .here we try to learn value function.Once we have optimal value function we can get Policy Pi*
+
+3. Model based RL: here we have Transition function(T) and reward function(R), 
+where 
+R maps from S(present state) to S'(next state)
+rewards maps from action to reward
+
+Out of all 3 value function based is the most poweful and simpler one. k
+
+A new kind of value function called Q-function:
+
+Q(s,a) = R(s) + gamma * SUM(s'){T(s,a,s') max(a){Q(s',a')}}...5.6
+
+Eq 5.6 states that value for arriving in S, leaving via action a,proceeding optimally thereafter ie the Q function for state s and action a is = Reward of that state s + gamma * sum of transition prob for moving from state s to state s' via action , times,maximum value of Q function for next state s' and next action a'
+ 
+one advantage of using Q(s,a) is that we can plug in the action a, for each iteration and see how it changes the value of Q function for various states. This helps us to try different values of actions and see their effect instead of algorithm picking these actions
+
+If we have to represent U(s) in terms of Q(s,a) we can write
+
+U(s) = max(a){Q(s,a)}
+
+Why?
+Q(s,a) depends on the state and action. So, for each state you have a Q value for each possible action that you can take from that state. U(s) depends only on the state and is the value considering that you have chosen only the "best" actions. So, to find U(s) using Q(s,a), you need to consider that you got the best action on s, that is, the action that leads to the best Q, and U(s) will have the same value as the Q of the best action, and it can be expressed as MAX_a( Q(s,a) ). Is that clear?
+
+
+1.You have one Q for each possible action in a specific state. Lets consider that you are in state "s1" and you can take actions "a" and "b" in this state. Lets also consider that:
+
+2.f you take action "a" and after that you chose only the "best" actions, you will have a reward of 10
+
+3.If you take action "b" and after that you chose only the "best" actions, you will have a reward of 5
+
+So, if you chose only the best action from state "s1" your reward will be 10, because the best action on "s1" is action "a" as you know that choosing "a" you can get a reward of 10. With this simple example we have:
+
+Q(s1, a) = 10
+Q(s1, b) = 5
+U(s1) = 10
+
+Is the difference of U and Q clear now? Can you see that U(s) is equal to the Q(s, a) with the maximum value? That is U(s) = MAX_a( Q(s, a) ). It is obvious as you must chose the best action on s1 to get U, and the best action is the one with the larger Q.
+
+And I think that it is now clear also that you have one U for each state, and one Q for each pair of state/action.
+
+
+Now it's time for policy .We can represent policy in terms of Q(s,a)
+
+P(s) = argmax(a){Q(s,a)}
+
+why?
+pi(s) is the optimal policy, given a state it returns the best action to take. The best action will be the action that leads to the best Q. ARGMAX( Q(s,a) ) "returns" the action that leads to the larger Q.
+
+Difference between argmax and max function?
+
+Argmax of a function f(x) is the value of x(input) which maximises f(x), and max of a function is the maxmimum value of the function f(x)(output)
+
+SEE IMAGE FP4
+
+So U(s) = value = max(a){Q(s,a)}
+
+Pi(s) = action = argmax(a){Q(s,a)}
+
+So Q learning is the process of finding optimal Q(s,a)
+
+Q(s,a) = R(s) + gamma *  SUM(s'){T(s,a,s')*max(a){Q(s',a')}}
+
+Practically we won't have the transition values to calculate the Q(s,a)
+
+So we can find Q(s,a) as:
+
+given <s,a,r,s'>
+
+Q^(s,a) <----alpha--- r + gamma* max(a'){Q^(s',a')}
+
+see image FP5
+
+where alpha is the learning rate which helps agent to move by a small amount calculate the reward in that path.
+
+
+few more things about learning rate:
+
+See IMAGE FP6
+
+here Xt is the value chosen from a distribution with a random variable x. alpha_t is chosen in such a way that sum(alpha_t) = inf and sum(aplha_t^2) < inf.
+
+Why is it "clear that alpha t at each time step is moving closer and closer to zero"?
+
+It is "moving closer" to zero because, in this quiz, alpha was defines as a function of time 't'. Besides that, it must satisfy the two given properties and the second one (sum of (alpha(t))² is a finite value) imply that alpha(t)^2 must tend to zero in the limit. So, intuitively alpha(t) also must tend to zero in the limit. That way, as t grows, alpha get smaller and smaller, "moving closer" to zero. The example, that satisfy both properties, is 1/t. See in the plot of 1/x on google that it goes closer and closer of zero as t grows (is moving to zero):
+https://www.google.com.br/search?q=1/x1
+
+And about alpha being a constant, in the previous video, alpha really appears to be defined as a constant, but in the next video, after the quiz, Litman says that in reality he means alpha(t). See:
+https://classroom.udacity.com/nanodegrees/nd009/parts/0091345409/modules/e64f9a65-fdb5-4e60-81a9-72813beebb7e/lessons/5446820041/concepts/6348990620923#1
+
+So you could ask, why alpha(t) must satisfy both properties presented in the quiz, right? The answer is that Q Learning is guaranteed to converge to the right solution only if alpha satisfy both properties. You can see that in this video:
+https://classroom.udacity.com/nanodegrees/nd009/parts/0091345409/modules/e64f9a65-fdb5-4e60-81a9-72813beebb7e/lessons/5446820041/concepts/63489906309231
+
+-----------------------------------------------------------------
+Can anyone please explain why exactly should we use alpha, what is intuition behind using it.
+
+Why should we pick the values of V randomly from X, how does it helps us to find the optimal Q(s,a)?
+
+I also request you to help me understand what the QUiz Learning Incrementally
+is all about? I didn't understand the quiz itself
+
+Alpha is the learning rate. It is the percentage that we allow new information to update our current information.
+
+So when we are just starting out we start with a large alpha (because we really don't know anything) but as we have learnt more and more we reduce alpha so that new information doesn't affect us as much as when we didn't know anything.) Sort of like real life.
+
+In the learning incrementally quiz, Vt is sampling from Xt and adding all the samples over time and finding its mean. For a moment assume that we did not have to deal with alpha (i.e alpha = 1). Then in this scenario Vt would be the Expected value of Xt if we had a lot of samples of Xt. Do you agree with this?
+
+Now if we did have alpha (under the equation I just showed above) the value of Vt would still be Expected value of Xt. Now instead of finding a simple mean, we find a weighted average (i.e each new sample effects only fractionally the new value of Vt.)
+
+This is an intuitive explanation. I think the math would be a little complicated.
+
+
+
+-------------------------------------------------------------
+In the Learning Incrementally Quiz Intro, we're told that xs are defined as being taken from some random distribution X. Then we're told the xs are used to learn the value V (which I think is the best utility value obtainable given the present time t information).
+
+Here's my 2 questions:
+
+1) Is my definition of V good?
+2) How randomly picked x can converge to the best value V? Is there any kind of score function that punishes bad move or maybe some kind gradient method is used?
+
+
+The fact that we're drawing x from a data distribution X means that, as more and more values are drawn from that distribution and are used to update the value V, we can expect that V will converge towards the mean of the distribution, X, which is called the expected value of V. This is actually strikingly similar to the Central Limit Theorem from statistics, and in fact uses the similar definitions:
+
+We can let Y_n from the link be V_t and let the sum be expressed instead as the update rule with alpha_t and x_t. Then you can see that Y_n converges to mu, the mean of the distribution. In the case of this problem, we simply identify it as the expected value.
+
+See IMAGE FP7
+
+here Q^ can be same as the original Q^ with transition prob.But that is not possible because Q^(s',a,s) changes with time
+
+
+
+See IMAGE FP8
+ this explains the Q-learning convergence.where Q(s,a) is actuall value of Q function
+
+s,a visited infinetly often means that it has to go through all states and action space and we need Transiiton pro and rewards from Reward functions.
+
+
+Q-learning is not a single algorithm but it is a family of algorithms, these are characterised based on:
+
+1.how do we initialize Q^?
+2.how to decay alpha_t?
+3.how do we choose actions?
+
+
+we can combine choosing random actions and using Q^ to take actions,which helps the agent to explore the space/environment.
+
+How?
+In this approach most of the time we'll be following Q^,but sometimes the agent takes a random action even if the reward is low, which in turn helps the agent to find the global min when this process is repeated several times, instead of getting stuck in local min.
+
+
+Epsilon - Greedy exploration: that is initially the agent more random moves but as the time pass number of random moves decays and uses the kowledge what it has more often(Q^).By doing like this
+
+Q^ reaches true Q 
+Pi^ reaches true Pi*
+
+
+Game theory:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======================================================================
 
 
 DEEP LEARNING:
