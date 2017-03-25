@@ -53,6 +53,30 @@ dataframe.describe(percentiles = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.99])
 by using describe() like this and observing the values of the features in between these percentiles we'can gain a lot of information about feature's behaviour
 
 
+======================================================================================
+
+
+
+DATA PRE-PROCESSING AND CLEANING:
+
+*to get the descriptive stats of a dataframe use 
+pd.describe()
+
+*to get the information about the data stored in each column of dataframe use
+pd.info()
+
+*To know which columns contains None value within a dataframe use
+pd.isnull(dataframeName).any()
+
+
+* To get all categorical columns of the dataset use
+
+numeric_columns_set = dataFrameName._get_numeric_data().columns.values
+
+dataframeColumns = dataFrameName.columns.values
+
+categorical_columns = list(set(dataframeColumns) - set(numeric_columns_set) )
+
 
 
 
