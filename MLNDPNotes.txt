@@ -1179,7 +1179,7 @@ Neural Networks: See IMAGE nn
 
 Implementing the hidden layer:
 
-see image mnn
+see image mnn.
 
 
 
