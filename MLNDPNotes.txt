@@ -1,6 +1,7 @@
 Source : Machine learning in Action txt book
 Knowledge representation of an algo is nothing but the knowledge that the machine has gained on data when it was trained on training data.
 
+
 NumPy matrix vs. array: 
 In NumPy there are two different data types for dealing with rows and columns of numbers. Be careful of this because they look similar, but simple mathematical operations such as multiply on the two data types can have different meanings. The matrix data type behaves more like matrices in MATLAB.™
 
