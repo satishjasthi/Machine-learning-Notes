@@ -567,13 +567,181 @@ of text to a vector of tokens where 1 represents the token existing in the docum
 
 
 
+---------------------------------------------------------------------------
+Source: Machine learning in Action text
+
+Here SVMs are discussed using Sequential minimal optimization algorithm.
+
+Support vector machines:
+
+Pros: Low generalization error, computationally inexpensive, easy to interpret results
+
+Cons: Sensitive to tuning parameters and kernel choice; natively only handles binary classification
+
+Works with: Numeric values, nominal values
+
+Separating data with the maximum margin:
+
+See image SVM1
+
+these kinds of datasets are called linearly seperabel datasets. and the line used to separate the dataset is called "separating hyperplane".
+
+The dimension of hyperplane is N-1 if the dimension of input data for the model is N,
+Ex: for 2D, dimension of hyperplane is 1 since it is a line
+and for 3D it is 2 since it'll be a plane.
+
+The hyperplane is our decision boundary. Everything on one side belongs to one class, and everything on the other side belongs to a different class.
+
+Key idea: We’d like to make our classifier in such a way that the farther a data point is from the decision boundary, the more confident we are about the prediction we’ve made.
+
+
+We’d like to find the point closest to the separating hyperplane and make sure this is as far away from the separating line as possible. This is known as margin. We want to have the greatest possible margin, because if we made a mistake or trained our classifier on limited data, we’d want it to be as robust as possible.
+
+The points closest to the separating hyperplane are known as support vectors.
+
+Finding the maximum margin: see image SVM2
+
+as we can see from SVM2 the distance between any point and the hyperplane is found by calculating the normal distance,which is given by
+
+(|WT*X + b|)/(||W||)
+absolute       length
+value
+
+where WT*X + b represents the hyperplane
+
+Framing the optimization problem in terms of our classifier:
+
+We’re going to use something like the Heaviside step function, f(w T * x + b) , where the function f(hyperplane) gives us -1 if u<0 , and 1 otherwise. 
+
+Why did we switch from class labels of 0 and 1 to -1 and 1? This makes the math manageable, because -1 and 1 are only different by the sign. We can write a single equation to describe the margin or how close a data point is to our separating hyper-plane and not have to worry if the data is in the -1 or +1 class.
+
+When we’re doing this and deciding where to place the separating line, this margin is calculated by label*(w T * x+b) . This is where the -1 and 1 class labels help out. If a point is far away from the separating plane on the positive side, then w T x+b will be a large positive number, and label*(w T * x+b) will give us a large number. If it’s far from the negative side and has a negative label, label*(w T * x+b) will also give us a large posi-
+tive number.
+
+The goal now is to find the w and b values that will define our classifier. To do this, we must find the points with the smallest margin. These are the support vectors briefly mentioned earlier. Then, when we find the points with the smallest margin, we must
+maximize that margin. This can be written as
+
+See image SVM2
+
+
+Source:http://machinelearningmastery.com/support-vector-machines-for-machine-learning/
+
+
+Support Vector Machines are perhaps one of the most popular and talked about machine learning algorithms.
+
+They were extremely popular around the time they were developed in the 1990s and continue to be the go-to method for a high-performing algorithm with little tuning.
+
+In this post you will discover the Support Vector Machine (SVM) machine learning algorithm. After reading this post you will know:
+
+How to disentangle the many names used to refer to support vector machines.
+The representation used by SVM when the model is actually stored on disk.
+How a learned SVM model representation can be used to make predictions for new data.
+How to learn an SVM model from training data.
+How to best prepare your data for the SVM algorithm.
+Where you might look to get more information on SVM.
+SVM is an exciting algorithm and the concepts are relatively simple. This post was written for developers with little or no background in statistics and linear algebra.
+
+As such we will stay high-level in this description and focus on the specific implementation concerns. The question around why specific equations are used or how they were derived are not covered and you may want to dive deeper in the further reading section.
+
+Let’s get started.
+
+Maximal-Margin Classifier
+
+The Maximal-Margin Classifier is a hypothetical classifier that best explains how SVM works in practice.
+
+The numeric input variables (x) in your data (the columns) form an n-dimensional space. For example, if you had two input variables, this would form a two-dimensional space.
+
+A hyperplane is a line that splits the input variable space. In SVM, a hyperplane is selected to best separate the points in the input variable space by their class, either class 0 or class 1. In two-dimensions you can visualize this as a line and let’s assume that all of our input points can be completely separated by this line. For example:
+
+B0 + (B1 * X1) + (B2 * X2) = 0
+
+Where the coefficients (B1 and B2) that determine the slope of the line and the intercept (B0) are found by the learning algorithm, and X1 and X2 are the two input variables.
+
+You can make classifications using this line. By plugging in input values into the line equation, you can calculate whether a new point is above or below the line.
+
+Above the line, the equation returns a value greater than 0 and the point belongs to the first class (class 0).
+Below the line, the equation returns a value less than 0 and the point belongs to the second class (class 1).
+A value close to the line returns a value close to zero and the point may be difficult to classify.
+If the magnitude of the value is large, the model may have more confidence in the prediction.
+The distance between the line and the closest data points is referred to as the margin. The best or optimal line that can separate the two classes is the line that as the largest margin. This is called the Maximal-Margin hyperplane.
+
+The margin is calculated as the perpendicular distance from the line to only the closest points. Only these points are relevant in defining the line and in the construction of the classifier. These points are called the support vectors. They support or define the hyperplane.
+
+The hyperplane is learned from training data using an optimization procedure that maximizes the margin.
+
+
+Soft Margin Classifier
+
+In practice, real data is messy and cannot be separated perfectly with a hyperplane.
+
+The constraint of maximizing the margin of the line that separates the classes must be relaxed. This is often called the soft margin classifier. This change allows some points in the training data to violate the separating line.
+
+An additional set of coefficients are introduced that give the margin wiggle room in each dimension. These coefficients are sometimes called slack variables. This increases the complexity of the model as there are more parameters for the model to fit to the data to provide this complexity.
+
+A tuning parameter is introduced called simply C that defines the magnitude of the wiggle allowed across all dimensions. The C parameters defines the amount of violation of the margin allowed. A C=0 is no violation and we are back to the inflexible Maximal-Margin Classifier described above. The larger the value of C the more violations of the hyperplane are permitted.
+
+During the learning of the hyperplane from data, all training instances that lie within the distance of the margin will affect the placement of the hyperplane and are referred to as support vectors. And as C affects the number of instances that are allowed to fall within the margin, C influences the number of support vectors used by the model.
+
+The smaller the value of C, the more sensitive the algorithm is to the training data (higher variance and lower bias).
+The larger the value of C, the less sensitive the algorithm is to the training data (lower variance and higher bias).
 
 
 
+Support Vector Machines (Kernels)
 
+The SVM algorithm is implemented in practice using a kernel.
 
+The learning of the hyperplane in linear SVM is done by transforming the problem using some linear algebra, which is out of the scope of this introduction to SVM.
 
+A powerful insight is that the linear SVM can be rephrased using the inner product of any two given observations, rather than the observations themselves. The inner product between two vectors is the sum of the multiplication of each pair of input values.
 
+For example, the inner product of the vectors [2, 3] and [5, 6] is 2*5 + 3*6 or 28.
+
+The equation for making a prediction for a new input using the dot product between the input (x) and each support vector (xi) is calculated as follows:
+
+f(x) = B0 + sum(ai * (x,xi))
+
+This is an equation that involves calculating the inner products of a new input vector (x) with all support vectors in training data. The coefficients B0 and ai (for each input) must be estimated from the training data by the learning algorithm.
+
+Linear Kernel SVM
+The dot-product is called the kernel and can be re-written as:
+
+K(x, xi) = sum(x * xi)
+
+The kernel defines the similarity or a distance measure between new data and the support vectors. The dot product is the similarity measure used for linear SVM or a linear kernel because the distance is a linear combination of the inputs.
+
+Other kernels can be used that transform the input space into higher dimensions such as a Polynomial Kernel and a Radial Kernel. This is called the Kernel Trick.
+
+It is desirable to use more complex kernels as it allows lines to separate the classes that are curved or even more complex. This in turn can lead to more accurate classifiers.
+
+Polynomial Kernel SVM
+Instead of the dot-product, we can use a polynomial kernel, for example:
+
+K(x,xi) = 1 + sum(x * xi)^d
+
+Where the degree of the polynomial must be specified by hand to the learning algorithm. When d=1 this is the same as the linear kernel. The polynomial kernel allows for curved lines in the input space.
+
+Radial Kernel SVM
+Finally, we can also have a more complex radial kernel. For example:
+
+K(x,xi) = exp(-gamma * sum((x – xi^2))
+
+Where gamma is a parameter that must be specified to the learning algorithm. A good default value for gamma is 0.1, where gamma is often 0 < gamma < 1. The radial kernel is very local and can create complex regions within the feature space, like closed polygons in two-dimensional space.
+
+How to Learn a SVM Model
+
+The SVM model needs to be solved using an optimization procedure.
+
+You can use a numerical optimization procedure to search for the coefficients of the hyperplane. This is inefficient and is not the approach used in widely used SVM implementations like LIBSVM. If implementing the algorithm as an exercise, you could use stochastic gradient descent.
+
+There are specialized optimization procedures that re-formulate the optimization problem to be a Quadratic Programming problem. The most popular method for fitting SVM is the Sequential Minimal Optimization (SMO) method that is very efficient. It breaks the problem down into sub-problems that can be solved analytically (by calculating) rather than numerically (by searching or optimizing).
+
+Data Preparation for SVM
+
+This section lists some suggestions for how to best prepare your training data when learning an SVM model.
+
+Numerical Inputs: SVM assumes that your inputs are numeric. If you have categorical inputs you may need to covert them to binary dummy variables (one variable for each category).
+Binary Classification: Basic SVM as described in this post is intended for binary (two-class) classification problems. Although, extensions have been developed for regression and multi-class classification.
 
 
 
